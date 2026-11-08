@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tec.sistem | Usted no se preocupe, nosotros nos encargamos — Automatización, DB & POS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans, Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            main: '#FFFFFF',
+                            textPrimary: '#0F172A',
+                            textSecondary: '#64748B',
+                            accent: '#1D4ED8',
+                            accentHover: '#1E40AF',
+                            accentLight: '#DBEAFE'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --glass-blur: 18px;
+            --bg-cover-opacity: 0.16;
+            --glass-surface-light: rgba(255, 255, 255, 0.78);
+            --glass-border-light: rgba(15, 23, 42, 0.09);
+            --glass-surface-dark: rgba(15, 23, 42, 0.76);
+            --glass-border-dark: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            transition: background-color 0.35s ease, color 0.35s ease;
+        }
+
+        /* Glassmorphism Core System */
+        .glass-panel {
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        html:not(.dark) .glass-panel {
+            background: var(--glass-surface-light);
+            border: 1px solid var(--glass-border-light);
+            box-shadow: 0 12px 32px -10px rgba(15, 23, 42, 0.07), inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+        }
+
+        html.dark .glass-panel {
+            background: var(--glass-surface-dark);
+            border: 1px solid var(--glass-border-dark);
+            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-hover:hover {
+            transform: translateY(-4px);
+            border-color: rgba(29, 78, 216, 0.45) !important;
+            box-shadow: 0 20px 40px -15px rgba(29, 78, 216, 0.18);
+        }
+
+        /* Cover Image Layer (background.png/jpg/jpeg) */
+        #globalCoverLayer {
+            opacity: var(--bg-cover-opacity);
+            transition: opacity 0.35s ease;
+        }
+
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #1D4ED8 0%, #64748B 100%);
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 3px solid #1D4ED8;
+            margin-top: -6px;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* WhatsApp Chat Background Pattern */
+        .wa-chat-bg {
+            background-color: #EFEAE2;
+            background-image: radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 0);
+            background-size: 18px 18px;
+        }
+        html.dark .wa-chat-bg {
+            background-color: #0B141A;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0);
+            background-size: 18px 18px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(100, 116, 139, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #64748B;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1D4ED8;
+        }
+    </style>
+</head>
+
+<body class="bg-[#FFFFFF] text-[#0F172A] dark:bg-[#0F172A] dark:text-[#FFFFFF] selection:bg-[#1D4ED8] selection:text-white relative min-h-screen">
+
+    <!-- ================= BACKGROUND COVER LAYER (background.png/jpg/jpeg) + AMBIENT GLOW ================= -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <!-- Local Cover Image: background.png / .jpg / .jpeg -->
+        <img id="globalCoverLayer" alt="Portada background tec.sistem" class="w-full h-full object-cover object-center hidden" />
+        <!-- Fallback Subtle Architectural Grid & Blue Glows -->
+        <div class="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-[#1D4ED8]/10 blur-[110px]"></div>
+        <div class="absolute top-1/3 -right-32 w-[460px] h-[460px] rounded-full bg-[#64748B]/10 blur-[110px]"></div>
+        <div class="absolute -bottom-32 left-1/3 w-[480px] h-[480px] rounded-full bg-[#1D4ED8]/10 blur-[120px]"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#64748B12_1px,transparent_1px),linear-gradient(to_bottom,#64748B12_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+    </div>
+
+    <!-- ================= STICKY GLASS NAVBAR ================= -->
+    <header class="sticky top-0 z-40 px-4 sm:px-6 lg:px-8 pt-3">
+        <nav class="max-w-7xl mx-auto glass-panel rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+            <!-- Brand Identity + Auto-resolved Logo.png/jpg/jpeg -->
+            <a href="#inicio" class="flex items-center gap-3 group shrink-0">
+                <div class="relative w-11 h-11 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden shadow-sm group-hover:border-[#1D4ED8] transition">
+                    <img id="navbarLogoImg" data-local-base="Logo" alt="Logo tec.sistem" class="w-full h-full object-contain p-1" />
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-mono font-extrabold text-lg tracking-tight text-[#0F172A] dark:text-white">tec<span class="text-[#1D4ED8]">.</span>sistem</span>
+                        <span class="w-2 h-2 rounded-full bg-[#1D4ED8]" title="Sistemas Activos"></span>
+                    </div>
+                    <span class="block text-[10px] uppercase tracking-widest text-[#64748B] dark:text-slate-400 font-semibold">Automatización & POS</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <div class="hidden xl:flex items-center gap-6 text-xs sm:text-sm font-medium text-[#64748B] dark:text-slate-300">
+                <a href="#inicio" class="hover:text-[#1D4ED8] dark:hover:text-white transition">Inicio</a>
+                <a href="#identidad" class="hover:text-[#1D4ED8] dark:hover:text-white transition">Misión & Visión</a>
+                <a href="#paquetes" class="hover:text-[#1D4ED8] dark:hover:text-white transition font-semibold text-[#0F172A] dark:text-white">Paquetes POS</a>
+                <a href="#bases-datos" class="hover:text-[#1D4ED8] dark:hover:text-white transition">Bases de Datos & Bots</a>
+                <a href="#simulador-pos" class="flex items-center gap-1.5 text-[#1D4ED8] dark:text-blue-400 font-semibold hover:underline">
+                    <span class="w-2 h-2 rounded-full bg-[#1D4ED8] animate-ping"></span>
+                    Simulador POS en Vivo
+                </a>
+                <a href="#arquitectura-ia" class="hover:text-[#1D4ED8] dark:hover:text-white transition">IA Gemini/Argon</a>
+                <a href="#contacto" class="hover:text-[#1D4ED8] dark:hover:text-white transition">Contacto</a>
+            </div>
+
+            <!-- Right Actions: Local Image Loader + Theme Customizer + WhatsApp CTA -->
+            <div class="flex items-center gap-2">
+                <!-- Local Images Manager Trigger -->
+                <button onclick="toggleImageTesterModal()" class="p-2.5 rounded-xl glass-panel hover:border-[#1D4ED8] text-[#0F172A] dark:text-slate-200 transition flex items-center gap-1.5 text-xs font-medium" title="Verificar o cargar imágenes locales (Logo, background, paquete1-3)">
+                    <i data-lucide="image" class="w-4 h-4 text-[#1D4ED8]"></i>
+                    <span class="hidden md:inline">Imágenes</span>
+                </button>
+
+                <!-- Quick Light / Dark Mode Switch -->
+                <button onclick="toggleTheme()" class="p-2.5 rounded-xl glass-panel hover:border-[#1D4ED8] text-[#0F172A] dark:text-slate-200 transition" title="Alternar Modo Claro / Oscuro">
+                    <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-[#0F172A]"></i>
+                    <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+                </button>
+
+                <!-- Glass & Theme Customizer Popover -->
+                <div class="relative">
+                    <button onclick="toggleCustomizer()" class="p-2.5 rounded-xl glass-panel hover:border-[#1D4ED8] text-[#0F172A] dark:text-slate-200 transition flex items-center gap-1.5 text-xs font-medium" title="Personalizar Glassmorphism y Tema">
+                        <i data-lucide="sliders" class="w-4 h-4 text-[#1D4ED8]"></i>
+                        <span class="hidden sm:inline">Glass UI</span>
+                    </button>
+
+                    <div id="customizerDropdown" class="hidden absolute right-0 mt-3 w-72 glass-panel rounded-2xl p-4 shadow-2xl z-50 border border-[#1D4ED8]/30">
+                        <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-slate-200 dark:border-slate-800">
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#1D4ED8] flex items-center gap-1.5">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Light / Dark Customize
+                            </span>
+                            <button onclick="toggleCustomizer()" class="text-[#64748B] hover:text-[#0F172A] dark:hover:text-white">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-4 text-xs">
+                            <div>
+                                <span class="block text-[#64748B] dark:text-slate-300 font-medium mb-2">Modo de Color</span>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="setThemeMode('light')" id="btnModeLight" class="py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 border border-[#1D4ED8] bg-[#1D4ED8] text-white">
+                                        <i data-lucide="sun" class="w-3.5 h-3.5"></i> Claro (#FFF)
+                                    </button>
+                                    <button onclick="setThemeMode('dark')" id="btnModeDark" class="py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-700 text-[#0F172A] dark:text-slate-200">
+                                        <i data-lucide="moon" class="w-3.5 h-3.5"></i> Oscuro
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <label class="text-[#64748B] dark:text-slate-300 font-medium">Efecto Glass (Blur)</label>
+                                    <span id="blurVal" class="font-mono font-semibold text-[#1D4ED8]">18px</span>
+                                </div>
+                                <input type="range" min="4" max="32" value="18" oninput="updateBlur(this.value)" class="w-full">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <label class="text-[#64748B] dark:text-slate-300 font-medium">Opacidad Portada (`background`)</label>
+                                    <span id="bgOpacityVal" class="font-mono font-semibold text-[#1D4ED8]">16%</span>
+                                </div>
+                                <input type="range" min="0" max="65" value="16" oninput="updateCoverOpacity(this.value)" class="w-full">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Direct WhatsApp Simulator CTA -->
+                <button onclick="openWhatsAppChat('Hola tec.sistem, quiero automatizar procesos en mi empresa para recuperar mi tiempo libre.')" class="bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-md shadow-[#1D4ED8]/20 flex items-center gap-2 transition">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Cotizar en WhatsApp</span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileNav()" class="xl:hidden p-2.5 rounded-xl glass-panel text-[#0F172A] dark:text-white">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobileNav" class="hidden xl:hidden max-w-7xl mx-auto mt-2 glass-panel rounded-2xl p-4 space-y-2 text-sm font-medium">
+            <a href="#inicio" onclick="toggleMobileNav()" class="block py-2 px-3 rounded-lg hover:bg-[#1D4ED8]/10">Inicio y Propuesta de Valor</a>
+            <a href="#identidad" onclick="toggleMobileNav()" class="block py-2 px-3 rounded-lg hover:bg-[#1D4ED8]/10">Identidad Corporativa (Misión, Visión y Logo)</a>
+            <a href="#paquetes" onclick="toggleMobileNav()" class="block py-2 px-3 rounded-lg hover:bg-[#1D4ED8]/10 font-semibold text-[#1D4ED8]">Paquetes POS (`paquete1`, `paquete2`, `paquete3`)</a>
+            <a href="#bases-datos" onclick="toggleMobileNav()" class="block py-2 px-3 rounded-lg hover:bg-[#1D4ED8]/10">Bases de Datos y Automatización</a>
+            <a href="#simulador-pos" onclick="toggleMobileNav()" class="block py-2 px-3 rounded-lg hover:bg-[#1D4ED8]/10">Demostración Interactiva POS (3 Niveles)</a>
+            <a href="#arquitectura-ia" onclick="toggleMobileNav()" class="block py-2 px-3 rounded-lg hover:bg-[#1D4ED8]/10">Ingeniería IA Gemini / Argon</a>
+            <a href="#contacto" onclick="toggleMobileNav()" class="block py-2 px-3 rounded-lg hover:bg-[#1D4ED8]/10">Contacto y Fuentes</a>
+        </div>
+    </header>
+
+    <!-- ================= MAIN CONTENT CONTAINER ================= -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24 space-y-24">
+
+        <!-- 1. HERO SECTION (PORTADA + VALOR DE DEVOLVER TIEMPO AL CLIENTE) -->
+        <section id="inicio" class="relative rounded-3xl overflow-hidden glass-panel p-6 sm:p-10 lg:p-12 border border-slate-200/80 dark:border-slate-800">
+            <!-- Hero Inner Cover Banner (background.png/jpg/jpeg) -->
+            <div class="absolute inset-0 -z-10 overflow-hidden">
+                <img id="heroCoverImg" data-local-base="background" alt="Imagen de portada background" class="w-full h-full object-cover opacity-20 dark:opacity-25 scale-105 transition-transform duration-700" />
+                <div class="absolute inset-0 bg-gradient-to-r from-[#FFFFFF] via-[#FFFFFF]/90 to-transparent dark:from-[#0F172A] dark:via-[#0F172A]/90 dark:to-transparent"></div>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-10 items-center">
+                <!-- Left Column: Brand Value Proposition -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel text-xs font-semibold text-[#0F172A] dark:text-white border border-[#1D4ED8]/30">
+                        <span class="px-2 py-0.5 rounded-full bg-[#1D4ED8] text-white font-mono text-[10px]">tec.sistem</span>
+                        <span class="text-[#64748B] dark:text-slate-300">Ingeniería que le devuelve su tiempo de vida</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#0F172A] dark:text-white leading-[1.1]">
+                        Usted no se preocupe, <br>
+                        <span class="text-[#1D4ED8]">nosotros nos encargamos.</span>
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-[#64748B] dark:text-slate-300 leading-relaxed max-w-2xl">
+                        Nuestra idea no es solo venderle software: <strong class="text-[#0F172A] dark:text-white font-semibold">es venderle tiempo libre y tranquilidad</strong>. Usted díganos qué necesita su empresa y nosotros lo automatizamos, depuramos su base de datos, creamos el informe automático o montamos su sistema web POS para que usted pueda <strong class="text-[#0F172A] dark:text-white">compartir más tiempo con su familia, practicar ese deporte que le apasiona o descansar sin estrés operativo</strong>.
+                    </p>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-wrap items-center gap-3.5 pt-1">
+                        <a href="#paquetes" class="bg-[#1D4ED8] hover:bg-[#1E40AF] text-white font-semibold px-6 py-3.5 rounded-xl shadow-lg shadow-[#1D4ED8]/25 flex items-center gap-2.5 transition">
+                            <i data-lucide="layers" class="w-5 h-5"></i>
+                            <span>Ver Paquetes POS (Desde $500.000 COP)</span>
+                        </a>
+                        <button onclick="openWhatsAppChat('Hola tec.sistem, quiero contarles qué proceso necesito automatizar en mi empresa para ahorrar tiempo.')" class="glass-panel hover:border-[#1D4ED8] text-[#0F172A] dark:text-white font-semibold px-6 py-3.5 rounded-xl flex items-center gap-2.5 transition">
+                            <i data-lucide="message-square-more" class="w-5 h-5 text-[#1D4ED8]"></i>
+                            <span>Simular Venta en WhatsApp</span>
+                        </button>
+                    </div>
+
+                    <!-- Quick Feature Highlights -->
+                    <div class="grid grid-cols-3 gap-3 pt-3 max-w-xl">
+                        <div class="glass-panel rounded-2xl p-3.5">
+                            <span class="block text-xl sm:text-2xl font-extrabold text-[#1D4ED8]">100%</span>
+                            <span class="text-xs text-[#64748B] dark:text-slate-400">Automatizado a medida</span>
+                        </div>
+                        <div class="glass-panel rounded-2xl p-3.5">
+                            <span class="block text-xl sm:text-2xl font-extrabold text-[#0F172A] dark:text-white">24/7</span>
+                            <span class="text-xs text-[#64748B] dark:text-slate-400">Stock & Bots activos</span>
+                        </div>
+                        <div class="glass-panel rounded-2xl p-3.5">
+                            <span class="block text-xl sm:text-2xl font-extrabold text-[#1D4ED8]">+15 hrs</span>
+                            <span class="text-xs text-[#64748B] dark:text-slate-400">Libres cada semana</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Interactive Time & Lifestyle Calculator Card -->
+                <div class="lg:col-span-5">
+                    <div class="glass-panel rounded-3xl p-6 border border-[#1D4ED8]/25 space-y-5">
+                        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3.5">
+                            <div>
+                                <span class="text-[11px] font-mono uppercase tracking-wider text-[#1D4ED8] font-bold">Calculadora de Calidad de Vida</span>
+                                <h2 class="text-base font-bold text-[#0F172A] dark:text-white">¿Cuánto tiempo le devolveremos?</h2>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg bg-[#1D4ED8]/10 text-[#1D4ED8] font-mono text-xs font-bold">En Vivo</span>
+                        </div>
+
+                        <div class="space-y-4 text-xs">
+                            <div>
+                                <div class="flex justify-between font-medium mb-1.5">
+                                    <span class="text-[#64748B] dark:text-slate-300">Cuantas horas semanales invierte en tareas manuales:</span>
+                                    <span id="heroHoursVal" class="font-mono font-bold text-[#1D4ED8] text-sm">12 hrs/sem</span>
+                                </div>
+                                <input id="heroHoursRange" type="range" min="2" max="36" value="12" oninput="calculateLifeTime()" class="w-full">
+                            </div>
+
+                            <div>
+                                <span class="block text-[#64748B] dark:text-slate-300 font-medium mb-2">¿En qué prefiere invertir su tiempo recuperado?</span>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button onclick="setGoalActivity('familia')" id="goalBtn_familia" class="py-2 px-2 rounded-xl border border-[#1D4ED8] bg-[#1D4ED8] text-white font-semibold text-center transition">
+                                        👨‍👩‍👧 Familia
+                                    </button>
+                                    <button onclick="setGoalActivity('deporte')" id="goalBtn_deporte" class="py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-[#0F172A] dark:text-slate-200 font-semibold text-center transition">
+                                        🚴‍♂️ Deporte
+                                    </button>
+                                    <button onclick="setGoalActivity('descanso')" id="goalBtn_descanso" class="py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-[#0F172A] dark:text-slate-200 font-semibold text-center transition">
+                                        ✈️ Viajar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Output Result -->
+                            <div class="p-4 rounded-2xl bg-slate-900 text-white space-y-2">
+                                <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                                    <span>TIEMPO DEVUELTO POR TEC.SISTEM</span>
+                                    <span class="text-blue-400">● 88% AHORRO</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 pt-1">
+                                    <div>
+                                        <span id="calcMonthHours" class="block text-2xl font-extrabold text-white">42 hrs / mes</span>
+                                        <span class="text-[11px] text-slate-400">Libres de trabajo manual</span>
+                                    </div>
+                                    <div>
+                                        <span id="calcYearDays" class="block text-2xl font-extrabold text-blue-400">21 días / año</span>
+                                        <span class="text-[11px] text-slate-400">De vida recuperados</span>
+                                    </div>
+                                </div>
+                                <p id="calcActivityMessage" class="text-xs text-slate-300 pt-1 border-t border-slate-800">
+                                    Equivale a <strong>10 fines de semana completos al año</strong> compartiendo con su familia mientras nuestros scripts generan sus reportes y controlan el stock.
+                                </p>
+                            </div>
+
+                            <button onclick="quoteFromTimeCalculator()" class="w-full py-3 rounded-xl bg-[#0F172A] dark:bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white font-semibold text-xs flex items-center justify-center gap-2 transition">
+                                <span>Automatizar mi operación ahora</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. IDENTIDAD CORPORATIVA: LOGO, ESLOGAN, MISIÓN Y VISIÓN (CUMPLIMIENTO ACA) -->
+        <section id="identidad" class="scroll-mt-24 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-widest text-[#1D4ED8] font-bold">Filosofía & Propósito Empresarial</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0F172A] dark:text-white mt-1">
+                        Identidad Corporativa <span class="text-[#1D4ED8]">tec.sistem</span>
+                    </h2>
+                </div>
+                <p class="text-xs sm:text-sm text-[#64748B] dark:text-slate-400 max-w-md">
+                    Integración de identidad visual (`Logo.png/jpg/jpeg`), eslogan institucional, Misión y Visión orientados a la excelencia en ingeniería de software.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-6 items-stretch">
+                <!-- Card 1: Official Brand Logo & Slogan -->
+                <div class="lg:col-span-4 glass-panel glass-hover rounded-3xl p-6 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-mono font-bold uppercase px-2.5 py-1 rounded-md bg-[#1D4ED8]/10 text-[#1D4ED8]">Logo & Eslogan</span>
+                            <span id="logoSourceBadge" class="text-[11px] font-mono text-[#64748B]">Logo.png/jpg/jpeg</span>
+                        </div>
+
+                        <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center justify-center text-center space-y-3">
+                            <div class="w-28 h-28 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 flex items-center justify-center shadow-md">
+                                <img id="identityLogoImg" data-local-base="Logo" alt="Logo oficial tec.sistem" class="w-full h-full object-contain" />
+                            </div>
+                            <div>
+                                <h3 class="font-mono text-xl font-extrabold text-[#0F172A] dark:text-white">tec<span class="text-[#1D4ED8]">.</span>sistem</h3>
+                                <p class="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">Soluciones en Automatización, Bases de Datos & POS</p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl border-l-4 border-l-[#1D4ED8] bg-[#1D4ED8]/5 dark:bg-[#1D4ED8]/10">
+                            <span class="block text-[10px] font-mono uppercase tracking-wider text-[#1D4ED8] font-bold">Eslogan Oficial</span>
+                            <p class="text-sm font-bold text-[#0F172A] dark:text-white mt-0.5">
+                                “Usted no se preocupe, nosotros nos encargamos.”
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-[#64748B] dark:text-slate-400 pt-4 border-t border-slate-200/70 dark:border-slate-800 mt-4">
+                        🎨 Recurso gráfico: <code class="font-mono text-[#0F172A] dark:text-white">Logo.png/jpg/jpeg</code> generado con asistencia de <strong>Gemini IA</strong>.
+                    </p>
+                </div>
+
+                <!-- Card 2: MISIÓN -->
+                <div class="lg:col-span-4 glass-panel glass-hover rounded-3xl p-6 sm:p-7 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-[#1D4ED8]/10 border border-[#1D4ED8]/25 flex items-center justify-center text-[#1D4ED8]">
+                            <i data-lucide="target" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-xs font-mono uppercase tracking-widest text-[#1D4ED8] font-bold block">Nuestra Misión</span>
+                        <h3 class="text-xl font-extrabold text-[#0F172A] dark:text-white">
+                            Devolver tiempo de vida a través de la automatización inteligente
+                        </h3>
+                        <p class="text-sm text-[#64748B] dark:text-slate-300 leading-relaxed">
+                            En <strong class="text-[#0F172A] dark:text-white">tec.sistem</strong> nuestra misión es liberar a los empresarios, comerciantes y equipos de trabajo de las tareas operativas repetitivas mediante la creación de sistemas web POS escalables, administración y normalización de bases de datos y scripts de automatización a medida. Nos encargamos de toda la complejidad técnica y de sus informes gerenciales para que nuestros clientes recuperen su activo más valioso: <strong class="text-[#0F172A] dark:text-white">el tiempo para compartir con su familia, practicar deporte y hacer crecer su negocio con tranquilidad</strong>.
+                        </p>
+                    </div>
+
+                    <div class="pt-4 mt-4 border-t border-slate-200/70 dark:border-slate-800 flex items-center justify-between text-xs text-[#64748B]">
+                        <span>Enfoque humano + Precisión técnica</span>
+                        <span class="font-mono font-bold text-[#1D4ED8]">01 / MISIÓN</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: VISIÓN -->
+                <div class="lg:col-span-4 glass-panel glass-hover rounded-3xl p-6 sm:p-7 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 rounded-2xl bg-[#0F172A] dark:bg-blue-600/20 border border-slate-700 flex items-center justify-center text-white dark:text-blue-400">
+                            <i data-lucide="compass" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-xs font-mono uppercase tracking-widest text-[#1D4ED8] font-bold block">Nuestra Visión</span>
+                        <h3 class="text-xl font-extrabold text-[#0F172A] dark:text-white">
+                            Liderar la transformación digital accesible y autónoma en Latinoamérica
+                        </h3>
+                        <p class="text-sm text-[#64748B] dark:text-slate-300 leading-relaxed">
+                            Consolidarnos para el año 2030 como el referente latinoamericano en ingeniería de automatización de procesos, arquitecturas de datos limpias y ecosistemas POS en la nube para PYMES y empresas en expansión. Aspiramos a un entorno empresarial donde ningún propietario pierda sus fines de semana cuadrando hojas de cálculo, gracias a plataformas minimalistas, conectadas en tiempo real con WhatsApp y asistidas por modelos de inteligencia artificial de alto razonamiento.
+                        </p>
+                    </div>
+
+                    <div class="pt-4 mt-4 border-t border-slate-200/70 dark:border-slate-800 flex items-center justify-between text-xs text-[#64748B]">
+                        <span>Escalabilidad Cloud & IA</span>
+                        <span class="font-mono font-bold text-[#1D4ED8]">02 / VISIÓN</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. PAQUETES WEB POS E IMÁGENES LOCALES (paquete1, paquete2, paquete3) -->
+        <section id="paquetes" class="scroll-mt-24 space-y-10">
+            <div class="text-center max-w-3xl mx-auto space-y-3">
+                <span class="px-3.5 py-1 rounded-full glass-panel text-xs font-mono font-bold uppercase tracking-wider text-[#1D4ED8]">
+                    Estrategia de Servicios y Paquetes POS (Precios en COP)
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0F172A] dark:text-white">
+                    Elija el nivel de automatización que su empresa necesita
+                </h2>
+                <p class="text-sm sm:text-base text-[#64748B] dark:text-slate-300">
+                    Desde una presencia web impecable de único pago hasta un ecosistema POS multiusuario conectado con inventario en vivo, vendedores, redes y administración total de bases de datos.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8 items-stretch">
+                <!-- PAQUETE 1: LANDING PAGE -->
+                <article class="glass-panel glass-hover rounded-3xl overflow-hidden flex flex-col justify-between border border-slate-200/90 dark:border-slate-800">
+                    <div>
+                        <!-- Image Container: paquete1.png/jpg/jpeg -->
+                        <div class="relative h-52 bg-slate-100 dark:bg-slate-900 overflow-hidden border-b border-slate-200/70 dark:border-slate-800">
+                            <img id="pkgImg1" data-local-base="paquete1" alt="Paquete 1 - Web Landing Page" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                            <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#0F172A]/85 text-white text-[11px] font-mono font-semibold backdrop-blur-md">
+                                Paquete 01 · Básico
+                            </div>
+                            <div class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/65 text-white text-[10px] font-mono">
+                                Fuente: Gemini IA (paquete1)
+                            </div>
+                        </div>
+
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <h3 class="text-xl font-extrabold text-[#0F172A] dark:text-white">1. Web Landing Page</h3>
+                                <p class="text-xs text-[#64748B] dark:text-slate-400 mt-1">
+                                    Página corporativa minimalista de alto impacto para presentar su empresa y capturar clientes 24/7.
+                                </p>
+                            </div>
+
+                            <!-- Pricing Block -->
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200/70 dark:border-slate-800">
+                                <span class="text-[11px] font-mono uppercase text-[#64748B] dark:text-slate-400 block">Inversión Total</span>
+                                <div class="text-2xl sm:text-3xl font-extrabold text-[#0F172A] dark:text-white font-mono mt-0.5">
+                                    $500.000 <span class="text-xs font-normal text-[#64748B]">COP</span>
+                                </div>
+                                <span class="inline-block mt-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[11px] font-semibold">
+                                    ✓ Único pago · Sin mensualidad obligatoria
+                                </span>
+                            </div>
+
+                            <ul class="space-y-2.5 text-xs text-[#64748B] dark:text-slate-300">
+                                <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5"></i> <span>Diseño minimalista <strong>Glassy Light/Dark</strong> adaptable a celulares y PC.</span></li>
+                                <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5"></i> <span>Secciones corporativas, servicios, ubicación y formulario de contacto.</span></li>
+                                <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5"></i> <span>Botón flotante de redirección directa a su WhatsApp y redes.</span></li>
+                                <li class="flex items-start gap-2 text-slate-400"><i data-lucide="minus-circle" class="w-4 h-4 shrink-0 mt-0.5"></i> <span>Automatización de DB o reportes disponible por proyecto adicional.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="p-6 pt-0 space-y-2">
+                        <button onclick="openWhatsAppPackageQuote(1)" class="w-full py-3 px-4 rounded-xl bg-[#0F172A] dark:bg-white text-white dark:text-[#0F172A] hover:bg-[#1D4ED8] dark:hover:bg-[#1D4ED8] dark:hover:text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            <span>Cotizar Paquete 1 en WhatsApp</span>
+                        </button>
+                        <button onclick="jumpToPosSimulator(1)" class="w-full py-2 text-xs font-semibold text-[#1D4ED8] hover:underline">
+                            Ver demostración interactiva Nivel 1 →
+                        </button>
+                    </div>
+                </article>
+
+                <!-- PAQUETE 2: CATÁLOGO + STOCK + WHATSAPP -->
+                <article class="glass-panel glass-hover rounded-3xl overflow-hidden flex flex-col justify-between border-2 border-[#1D4ED8] relative shadow-xl">
+                    <div>
+                        <!-- Image Container: paquete2.png/jpg/jpeg -->
+                        <div class="relative h-52 bg-slate-100 dark:bg-slate-900 overflow-hidden border-b border-slate-200/70 dark:border-slate-800">
+                            <img id="pkgImg2" data-local-base="paquete2" alt="Paquete 2 - Catálogo con disponibilidad y WhatsApp" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                            <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#1D4ED8] text-white text-[11px] font-mono font-semibold shadow">
+                                Paquete 02 · Más Popular PYMES
+                            </div>
+                            <div class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/65 text-white text-[10px] font-mono">
+                                Fuente: Gemini IA (paquete2)
+                            </div>
+                        </div>
+
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <h3 class="text-xl font-extrabold text-[#0F172A] dark:text-white">2. Web Productos + Stock + WhatsApp</h3>
+                                <p class="text-xs text-[#64748B] dark:text-slate-400 mt-1">
+                                    Página con catálogo interactivo que informa si hay o no unidades disponibles y conecta cada producto directo a WhatsApp.
+                                </p>
+                            </div>
+
+                            <!-- Pricing Block -->
+                            <div class="p-4 rounded-2xl bg-[#1D4ED8]/5 dark:bg-[#1D4ED8]/15 border border-[#1D4ED8]/30">
+                                <span class="text-[11px] font-mono uppercase text-[#1D4ED8] font-bold block">Implementación + Suscripción</span>
+                                <div class="text-2xl sm:text-3xl font-extrabold text-[#0F172A] dark:text-white font-mono mt-0.5">
+                                    $800.000 <span class="text-xs font-normal text-[#64748B]">COP</span>
+                                </div>
+                                <div class="mt-1 text-xs font-semibold text-[#1D4ED8] dark:text-blue-400">
+                                    + Suscripción mensual de <span class="font-mono font-bold">$200.000 COP / mes</span>
+                                </div>
+                            </div>
+
+                            <ul class="space-y-2.5 text-xs text-[#64748B] dark:text-slate-300">
+                                <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5"></i> <span>Catálogo dinámico que informa en vivo: <strong>"Disponible"</strong> o <strong>"Agotado"</strong>.</span></li>
+                                <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5"></i> <span>Botón de <strong>compra directa a WhatsApp</strong> con referencia y precio pre-cargado.</span></li>
+                                <li class="flex items-start gap-2"><i data-lucide="database" class="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5"></i> <span><strong>Base de Datos & Automatización (Intermedio):</strong> Depuración y normalización mensual de catálogo + reporte automático de productos más consultados.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="p-6 pt-0 space-y-2">
+                        <button onclick="openWhatsAppPackageQuote(2)" class="w-full py-3 px-4 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#1D4ED8]/25 transition">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            <span>Cotizar Paquete 2 en WhatsApp</span>
+                        </button>
+                        <button onclick="jumpToPosSimulator(2)" class="w-full py-2 text-xs font-semibold text-[#1D4ED8] hover:underline">
+                            Probar Catálogo y Stock Nivel 2 →
+                        </button>
+                    </div>
+                </article>
+
+                <!-- PAQUETE 3: ECOSISTEMA POS FULL -->
+                <article class="glass-panel glass-hover rounded-3xl overflow-hidden flex flex-col justify-between border border-slate-200/90 dark:border-slate-800">
+                    <div>
+                        <!-- Image Container: paquete3.png/jpg/jpeg -->
+                        <div class="relative h-52 bg-slate-100 dark:bg-slate-900 overflow-hidden border-b border-slate-200/70 dark:border-slate-800">
+                            <img id="pkgImg3" data-local-base="paquete3" alt="Paquete 3 - Ecosistema POS Full Multiusuario" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                            <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#0F172A] text-white text-[11px] font-mono font-semibold border border-[#1D4ED8]">
+                                Paquete 03 · Enterprise Full POS & DB
+                            </div>
+                            <div class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/65 text-white text-[10px] font-mono">
+                                Fuente: Gemini IA (paquete3)
+                            </div>
+                        </div>
+
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <h3 class="text-xl font-extrabold text-[#0F172A] dark:text-white">3. Ecosistema Web POS & DB Full</h3>
+                                <p class="text-xs text-[#64748B] dark:text-slate-400 mt-1">
+                                    Plataforma web conectada con stock en tiempo real, usuarios vendedores, panel administrador, redes de contacto y automatización total.
+                                </p>
+                            </div>
+
+                            <!-- Pricing Block -->
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200/70 dark:border-slate-800">
+                                <span class="text-[11px] font-mono uppercase text-[#64748B] dark:text-slate-400 block">Ecosistema Completo + Soporte Full</span>
+                                <div class="text-2xl sm:text-3xl font-extrabold text-[#0F172A] dark:text-white font-mono mt-0.5">
+                                    $3.000.000 <span class="text-xs font-normal text-[#64748B]">COP</span>
+                                </div>
+                                <div class="mt-1 text-xs font-semibold text-[#1D4ED8] dark:text-blue-400">
+                                    + Suscripción mensual de <span class="font-mono font-bold">$500.000 COP / mes</span>
+                                </div>
+                            </div>
+
+                            <ul class="space-y-2.5 text-xs text-[#64748B] dark:text-slate-300">
+                                <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5"></i> <span><strong>Stock Conectado en Vivo:</strong> Descuento automático por cada venta en mostrador o web.</span></li>
+                                <li class="flex items-start gap-2"><i data-lucide="users" class="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5"></i> <span><strong>Módulo Vendedores y Admin:</strong> Sesiones individuales, comisiones, arqueo de caja y alertas.</span></li>
+                                <li class="flex items-start gap-2"><i data-lucide="cpu" class="w-4 h-4 text-[#1D4ED8] shrink-0 mt-0.5"></i> <span><strong>Ingeniería DB & Automatización FULL:</strong> Depuración continua, scripts de automatización y reportes gerenciales automáticos a su WhatsApp.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="p-6 pt-0 space-y-2">
+                        <button onclick="openWhatsAppPackageQuote(3)" class="w-full py-3 px-4 rounded-xl bg-[#0F172A] dark:bg-white text-white dark:text-[#0F172A] hover:bg-[#1D4ED8] dark:hover:bg-[#1D4ED8] dark:hover:text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            <span>Cotizar Paquete 3 en WhatsApp</span>
+                        </button>
+                        <button onclick="jumpToPosSimulator(3)" class="w-full py-2 text-xs font-semibold text-[#1D4ED8] hover:underline">
+                            Abrir Terminal Vendedor / Admin Nivel 3 →
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- 4. DEMOSTRACIÓN INTERACTIVA EN VIVO DE LOS 3 NIVELES POS -->
+        <section id="simulador-pos" class="scroll-mt-24 space-y-8">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#1D4ED8]">
+                        <span class="w-2 h-2 rounded-full bg-[#1D4ED8] animate-ping"></span>
+                        <span>Laboratorio de Previsualización Interactiva</span>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0F172A] dark:text-white mt-1">
+                        Pruebe en vivo los <span class="text-[#1D4ED8]">3 Niveles de POS</span> antes de contratar
+                    </h2>
+                </div>
+
+                <!-- Level Selector Pills -->
+                <div class="flex flex-wrap gap-2 p-1.5 rounded-2xl glass-panel border border-slate-200 dark:border-slate-800">
+                    <button onclick="setSimulatorLevel(1)" id="simTab1" class="px-4 py-2 rounded-xl text-xs font-bold transition text-[#64748B] dark:text-slate-300">
+                        Nivel 1: Landing ($500k)
+                    </button>
+                    <button onclick="setSimulatorLevel(2)" id="simTab2" class="px-4 py-2 rounded-xl text-xs font-bold transition bg-[#1D4ED8] text-white shadow">
+                        Nivel 2: Catálogo + WhatsApp ($800k)
+                    </button>
+                    <button onclick="setSimulatorLevel(3)" id="simTab3" class="px-4 py-2 rounded-xl text-xs font-bold transition text-[#64748B] dark:text-slate-300">
+                        Nivel 3: POS + Vendedores + Admin ($3M)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Application Window -->
+            <div class="glass-panel rounded-3xl overflow-hidden border border-[#1D4ED8]/30 shadow-xl">
+                <!-- Window Top Bar -->
+                <div class="bg-[#0F172A] text-white px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                        <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                        <span id="simUrlBar" class="ml-2 px-3 py-1 rounded-lg bg-slate-800 font-mono text-xs text-slate-300">
+                            https://tienda-cliente.tec.sistem/catalogo-whatsapp
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="simStatusLabel" class="text-[11px] font-mono px-2.5 py-1 rounded bg-[#1D4ED8] text-white">
+                            MODO DEMO: PAQUETE 2 ACTIVO
+                        </span>
+                    </div>
+                </div>
+
+                <!-- VIEW 1: LANDING PAGE SIMULATION -->
+                <div id="simPane1" class="hidden p-6 sm:p-10 space-y-6">
+                    <div class="grid lg:grid-cols-12 gap-8 items-center">
+                        <div class="lg:col-span-7 space-y-4">
+                            <span class="text-xs font-mono uppercase px-2.5 py-1 rounded bg-[#1D4ED8]/10 text-[#1D4ED8] font-bold">
+                                Previsualización Paquete 1 · $500.000 COP Único Pago
+                            </span>
+                            <h3 class="text-2xl sm:text-3xl font-extrabold text-[#0F172A] dark:text-white">
+                                Landing Page Corporativa Minimalista
+                            </h3>
+                            <p class="text-sm text-[#64748B] dark:text-slate-300">
+                                Presente su marca, portafolio de servicios, ubicación y reciba solicitudes de clientes potenciales directamente en su correo o WhatsApp sin pagar suscripción mensual.
+                            </p>
+                            <div class="grid sm:grid-cols-2 gap-3 pt-2 text-xs">
+                                <div class="p-3.5 rounded-2xl glass-panel">
+                                    <strong class="block text-[#0F172A] dark:text-white">✓ Diseño Ultra Rápido</strong>
+                                    <span class="text-[#64748B]">Listo para campañas en Google e Instagram.</span>
+                                </div>
+                                <div class="p-3.5 rounded-2xl glass-panel">
+                                    <strong class="block text-[#0F172A] dark:text-white">✓ Captura de Prospectos</strong>
+                                    <span class="text-[#64748B]">Botón directo al chat de su negocio.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-5 glass-panel rounded-2xl p-5 border border-slate-200 dark:border-slate-800 space-y-3">
+                            <div class="text-xs font-bold uppercase text-[#1D4ED8]">Simular Contacto desde Landing Page</div>
+                            <input id="simLandingName" type="text" value="Restaurante & Café El Parque" class="w-full px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700" />
+                            <input id="simLandingNeed" type="text" value="Deseo cotizar la Landing Page de $500.000 COP" class="w-full px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700" />
+                            <button onclick="simulateLandingLead()" class="w-full py-2.5 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white font-semibold text-xs flex items-center justify-center gap-2 transition">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                <span>Enviar al Entorno de Mensajería WhatsApp</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: CATALOG WITH STOCK STATUS & DIRECT WHATSAPP SALE -->
+                <div id="simPane2" class="p-6 sm:p-8 space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-extrabold text-[#0F172A] dark:text-white">
+                                Catálogo Conectado: Informa si hay o no Stock + Botón Directo a WhatsApp
+                            </h3>
+                            <p class="text-xs text-[#64748B] dark:text-slate-400">
+                                💡 <strong>Interactivo:</strong> Haga clic en <span class="underline">"Alternar Stock"</span> para simular que un producto se agota, o en <span class="text-[#1D4ED8] font-semibold">"Comprar por WhatsApp"</span> para abrir la simulación de venta en el chat.
+                            </p>
+                        </div>
+                        <div class="flex gap-2 text-xs">
+                            <button onclick="renderLevel2Catalog('all')" class="px-3 py-1.5 rounded-lg glass-panel font-semibold">Todos (4)</button>
+                            <button onclick="renderLevel2Catalog('in')" class="px-3 py-1.5 rounded-lg glass-panel font-semibold text-emerald-600">Disponibles</button>
+                            <button onclick="renderLevel2Catalog('out')" class="px-3 py-1.5 rounded-lg glass-panel font-semibold text-rose-600">Agotados</button>
+                        </div>
+                    </div>
+
+                    <div id="simLevel2Grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Rendered via JS -->
+                    </div>
+                </div>
+
+                <!-- VIEW 3: FULL POS ECOSYSTEM (STOCK, SELLERS, ADMIN, NETWORKS) -->
+                <div id="simPane3" class="hidden p-6 sm:p-8 space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-extrabold text-[#0F172A] dark:text-white">
+                                Ecosistema POS Conectado: Stock Real + Vendedores + Admin + Redes
+                            </h3>
+                            <p class="text-xs text-[#64748B] dark:text-slate-400">
+                                Cambie entre la terminal de <strong>Usuario Vendedor</strong> (para facturar y descontar stock) y el <strong>Panel Administrador</strong> (para ver reportes automáticos, reabastecer stock y auditar vendedores).
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                            <button onclick="switchPosRole('vendedor')" id="btnPosVendedor" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-[#1D4ED8] text-white transition flex items-center gap-1.5">
+                                <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i> Vista Vendedor
+                            </button>
+                            <button onclick="switchPosRole('admin')" id="btnPosAdmin" class="px-3.5 py-2 rounded-lg text-xs font-bold text-[#64748B] dark:text-slate-300 transition flex items-center gap-1.5">
+                                <i data-lucide="shield" class="w-3.5 h-3.5"></i> Vista Administrador & DB
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Role A: Seller Terminal -->
+                    <div id="posSellerWorkspace" class="grid lg:grid-cols-12 gap-6">
+                        <div class="lg:col-span-7 space-y-4">
+                            <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl glass-panel text-xs">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    <span class="text-[#64748B]">Usuario Vendedor:</span>
+                                    <select id="activeSellerSelect" class="bg-transparent font-bold text-[#0F172A] dark:text-white focus:outline-none">
+                                        <option value="Camila Restrepo" class="text-slate-900">Camila Restrepo (Punto Principal)</option>
+                                        <option value="Mateo Vargas" class="text-slate-900">Mateo Vargas (Ventas WhatsApp & Redes)</option>
+                                        <option value="Valentina Ortiz" class="text-slate-900">Valentina Ortiz (Sucursal Norte)</option>
+                                    </select>
+                                </div>
+                                <span class="font-mono text-[11px] text-[#1D4ED8]">● Stock Cloud Conectado</span>
+                            </div>
+
+                            <div id="posSellerProductsGrid" class="grid sm:grid-cols-2 gap-3">
+                                <!-- Rendered via JS -->
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-5 glass-panel rounded-2xl p-5 flex flex-col justify-between border border-[#1D4ED8]/30 space-y-4">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
+                                    <div>
+                                        <span class="text-[10px] font-mono uppercase text-[#1D4ED8] font-bold">TERMINAL DE CAJA POS</span>
+                                        <h4 class="text-sm font-bold">Factura / Orden en Curso</h4>
+                                    </div>
+                                    <button onclick="clearCart()" class="text-xs text-rose-600 hover:underline">Vaciar</button>
+                                </div>
+                                <div id="posTicketList" class="space-y-2 max-h-48 overflow-y-auto text-xs pr-1">
+                                    <!-- Rendered via JS -->
+                                </div>
+                            </div>
+
+                            <div class="space-y-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs text-[#64748B]">Total Venta POS:</span>
+                                    <span id="posTicketTotal" class="font-mono text-lg font-extrabold text-[#1D4ED8]">$0 COP</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="completePosCheckout(false)" class="py-2.5 px-3 rounded-xl bg-[#0F172A] dark:bg-white text-white dark:text-[#0F172A] font-semibold text-xs flex items-center justify-center gap-1.5">
+                                        <i data-lucide="check" class="w-4 h-4"></i> Facturar en Caja
+                                    </button>
+                                    <button onclick="completePosCheckout(true)" class="py-2.5 px-3 rounded-xl bg-[#1D4ED8] text-white font-semibold text-xs flex items-center justify-center gap-1.5">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i> Enviar Comprobante WA
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Role B: Admin Dashboard -->
+                    <div id="posAdminWorkspace" class="hidden space-y-6">
+                        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="p-4 rounded-2xl glass-panel border-l-4 border-l-[#1D4ED8]">
+                                <span class="text-xs text-[#64748B]">Ventas Acumuladas Hoy</span>
+                                <div id="admTotalSales" class="text-2xl font-extrabold font-mono text-[#0F172A] dark:text-white mt-1">$5.420.000 COP</div>
+                                <span class="text-[11px] text-emerald-600">Sincronizado en tiempo real</span>
+                            </div>
+                            <div class="p-4 rounded-2xl glass-panel border-l-4 border-l-emerald-500">
+                                <span class="text-xs text-[#64748B]">Vendedores Conectados</span>
+                                <div class="text-2xl font-extrabold font-mono text-[#0F172A] dark:text-white mt-1">3 Activos</div>
+                                <span id="admTxCount" class="text-[11px] text-[#64748B]">14 órdenes procesadas</span>
+                            </div>
+                            <div class="p-4 rounded-2xl glass-panel border-l-4 border-l-amber-500">
+                                <span class="text-xs text-[#64748B]">Alertas de Stock Bajo</span>
+                                <div id="admLowStockCount" class="text-2xl font-extrabold font-mono text-amber-600 mt-1">1 SKU</div>
+                                <span class="text-[11px] text-[#64748B]">Bot de alerta activado</span>
+                            </div>
+                            <div class="p-4 rounded-2xl glass-panel border-l-4 border-l-[#0F172A] dark:border-l-white">
+                                <span class="text-xs text-[#64748B]">Reporte Automático al Dueño</span>
+                                <button onclick="sendAdminReportToWhatsApp()" class="mt-2 w-full py-2 px-3 rounded-xl bg-[#1D4ED8] text-white text-xs font-semibold flex items-center justify-center gap-1.5">
+                                    <i data-lucide="send" class="w-3.5 h-3.5"></i> Enviar Cierre a mi WhatsApp
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid lg:grid-cols-12 gap-6">
+                            <!-- Inventory Replenishment Table -->
+                            <div class="lg:col-span-7 glass-panel rounded-2xl p-5 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-sm font-bold">Administración de Stock en Tiempo Real</h4>
+                                    <span class="text-[11px] font-mono text-[#1D4ED8]">Base de Datos Normalizada</span>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left font-mono text-xs">
+                                        <thead>
+                                            <tr class="border-b border-slate-200 dark:border-slate-800 text-[#64748B]">
+                                                <th class="py-2">Producto</th>
+                                                <th class="py-2">Unidades</th>
+                                                <th class="py-2">Estado</th>
+                                                <th class="py-2 text-right">Reabastecer</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admInventoryRows" class="divide-y divide-slate-200/60 dark:divide-slate-800">
+                                            <!-- Rendered via JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Sellers Performance & Social Omni-Channel -->
+                            <div class="lg:col-span-5 space-y-4">
+                                <div class="glass-panel rounded-2xl p-5 space-y-3">
+                                    <h4 class="text-sm font-bold">Ventas por Usuario Vendedor</h4>
+                                    <div id="admSellerStats" class="space-y-2 text-xs">
+                                        <!-- Rendered via JS -->
+                                    </div>
+                                </div>
+
+                                <div class="glass-panel rounded-2xl p-4 space-y-2 border border-[#1D4ED8]/25 text-xs">
+                                    <div class="font-bold flex items-center justify-between">
+                                        <span>Canales & Redes Conectadas al POS</span>
+                                        <span class="text-[10px] font-mono text-emerald-600 font-bold">● ONLINE</span>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-2 text-center pt-1">
+                                        <div class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">WhatsApp Business</div>
+                                        <div class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">Instagram DM</div>
+                                        <div class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">Catálogo Web</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. INGENIERÍA DE BASES DE DATOS Y AUTOMATIZACIÓN (LABORATORIO EN VIVO) -->
+        <section id="bases-datos" class="scroll-mt-24 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div class="max-w-2xl">
+                    <span class="text-xs font-mono uppercase tracking-widest text-[#1D4ED8] font-bold">Arquitectura de Datos & Scripts</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0F172A] dark:text-white mt-1">
+                        Creación y Administración de Bases de Datos & Automatización
+                    </h2>
+                    <p class="text-sm text-[#64748B] dark:text-slate-300 mt-2">
+                        Disponibles <strong>por proyecto a medida</strong>, incluidos de forma <strong>intermedia en el Paquete 2</strong> y <strong>100% Full en el Paquete 3</strong>.
+                    </p>
+                </div>
+                <button onclick="openWhatsAppChat('Hola tec.sistem, necesito cotizar un proyecto de depuración de base de datos y reportes automáticos.')" class="px-5 py-3 rounded-xl bg-[#1D4ED8] text-white text-xs font-semibold self-start md:self-auto">
+                    Cotizar Proyecto de Datos en WhatsApp
+                </button>
+            </div>
+
+            <!-- 3 Cards: Depuración, Scripts, Reportes -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-panel rounded-3xl p-6 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="w-10 h-10 rounded-xl bg-[#1D4ED8]/10 text-[#1D4ED8] flex items-center justify-center">
+                            <i data-lucide="database" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-[#1D4ED8]/10 text-[#1D4ED8] font-semibold">Plan 2 & Plan 3</span>
+                    </div>
+                    <h3 class="text-lg font-bold">1. Depuración y Normalización</h3>
+                    <p class="text-xs text-[#64748B] dark:text-slate-300 leading-relaxed">
+                        Unificamos clientes duplicados, corregimos precios desactualizados, limpiamos archivos de Excel caóticos y estructuramos tablas relacionales rápidas y seguras.
+                    </p>
+                </div>
+
+                <div class="glass-panel rounded-3xl p-6 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="w-10 h-10 rounded-xl bg-[#1D4ED8]/10 text-[#1D4ED8] flex items-center justify-center">
+                            <i data-lucide="terminal" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-[#1D4ED8]/10 text-[#1D4ED8] font-semibold">Por Proyecto / Full Plan 3</span>
+                    </div>
+                    <h3 class="text-lg font-bold">2. Scripts de Automatización</h3>
+                    <p class="text-xs text-[#64748B] dark:text-slate-300 leading-relaxed">
+                        Bots programados que cruzan inventarios, envían recordatorios de pago, actualizan catálogos web y conectan su operación sin intervención manual.
+                    </p>
+                </div>
+
+                <div class="glass-panel rounded-3xl p-6 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="w-10 h-10 rounded-xl bg-[#1D4ED8]/10 text-[#1D4ED8] flex items-center justify-center">
+                            <i data-lucide="file-bar-chart-2" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-[#1D4ED8]/10 text-[#1D4ED8] font-semibold">Plan 2 & Full Plan 3</span>
+                    </div>
+                    <h3 class="text-lg font-bold">3. Reportes Automáticos</h3>
+                    <p class="text-xs text-[#64748B] dark:text-slate-300 leading-relaxed">
+                        Usted nos dice qué indicador necesita ver y el sistema genera y envía el informe ejecutivo a su WhatsApp mientras usted descansa o entrena.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interactive DB Normalization Demo -->
+            <div class="glass-panel rounded-3xl p-6 border border-slate-200 dark:border-slate-800 space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-mono text-[#1D4ED8] font-bold">DEMO EN VIVO DE DEPURACIÓN SQL</span>
+                        <h3 class="text-lg font-bold">Transforme datos sucios en un reporte limpio y listo para WhatsApp</h3>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="normalizeDatabaseDemo()" class="px-4 py-2.5 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-xs font-semibold flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i> Ejecutar Depuración & Reporte
+                        </button>
+                        <button onclick="resetDatabaseDemo()" class="px-3 py-2.5 rounded-xl glass-panel text-xs font-medium">
+                            Ver Datos Sucios
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-8 overflow-x-auto">
+                        <table class="w-full text-left font-mono text-xs">
+                            <thead>
+                                <tr class="border-b border-slate-200 dark:border-slate-800 text-[#64748B]">
+                                    <th class="py-2 px-2">ID</th>
+                                    <th class="py-2 px-2">CLIENTE / ITEM</th>
+                                    <th class="py-2 px-2">WHATSAPP</th>
+                                    <th class="py-2 px-2">SALDO COP</th>
+                                    <th class="py-2 px-2">ESTADO</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dbTableBody" class="divide-y divide-slate-200/60 dark:divide-slate-800">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="lg:col-span-4">
+                        <div id="dbTerminalBox" class="p-4 rounded-2xl bg-[#0F172A] text-slate-200 font-mono text-xs space-y-2">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. SECCIÓN DE ARQUITECTURA IA: GEMINI / ARGON (NIVEL DE RAZONAMIENTO ALTO MUY EXHAUSTIVO) -->
+        <section id="arquitectura-ia" class="scroll-mt-24">
+            <div class="glass-panel rounded-3xl p-6 sm:p-10 border-2 border-[#1D4ED8]/35 relative overflow-hidden">
+                <div class="grid lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-8 space-y-4">
+                        <div class="inline-flex flex-wrap items-center gap-2 px-3 py-1 rounded-full bg-[#1D4ED8]/10 text-[#1D4ED8] font-mono text-xs font-bold">
+                            <i data-lucide="cpu" class="w-4 h-4"></i>
+                            <span>TRANSPARENCIA TECNOLÓGICA & AUDITORÍA DE IA</span>
+                        </div>
+
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0F172A] dark:text-white">
+                            Ingeniería asistida por el modelo de IA <span class="text-[#1D4ED8]">Gemini / Argon</span> — Nivel de Razonamiento Alto (Muy Exhaustivo)
+                        </h2>
+
+                        <p class="text-sm text-[#64748B] dark:text-slate-300 leading-relaxed">
+                            Para garantizar una arquitectura limpia, reactiva y libre de fricciones, el diseño de sistemas, la lógica de simulación POS multiusuario, los algoritmos de normalización de datos y la generación de activos visuales de <strong class="text-[#0F172A] dark:text-white">tec.sistem</strong> fueron estructurados empleando el modelo avanzado <strong class="text-[#0F172A] dark:text-white">Gemini / Argon configurado en Nivel de Razonamiento Alto (Muy Exhaustivo)</strong>.
+                        </p>
+
+                        <div class="grid sm:grid-cols-3 gap-3 pt-2 text-xs">
+                            <div class="p-3.5 rounded-2xl glass-panel">
+                                <span class="font-mono font-bold text-[#1D4ED8] block">Modelo Core</span>
+                                <span class="font-semibold text-[#0F172A] dark:text-white">Gemini / Argon</span>
+                                <span class="block text-[11px] text-[#64748B]">Síntesis de código & UX</span>
+                            </div>
+                            <div class="p-3.5 rounded-2xl glass-panel">
+                                <span class="font-mono font-bold text-[#1D4ED8] block">Profundidad Cognitiva</span>
+                                <span class="font-semibold text-[#0F172A] dark:text-white">Razonamiento Alto</span>
+                                <span class="block text-[11px] text-[#64748B]">Evaluación muy exhaustiva</span>
+                            </div>
+                            <div class="p-3.5 rounded-2xl glass-panel">
+                                <span class="font-mono font-bold text-[#1D4ED8] block">Activos Visuales</span>
+                                <span class="font-semibold text-[#0F172A] dark:text-white">Google Flow - Nano Banana Pro</span>
+                                <span class="block text-[11px] text-[#64748B]">Logo, portada y paquetes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-4">
+                        <div class="p-5 rounded-2xl bg-[#0F172A] text-white font-mono text-xs space-y-2.5 border border-slate-800 shadow-xl">
+                            <div class="flex items-center justify-between text-blue-400 border-b border-slate-800 pb-2">
+                                <span>AI_TELEMETRY_LOG</span>
+                                <span>VERIFIED ✓</span>
+                            </div>
+                            <div class="space-y-1.5 text-[11px] text-slate-300">
+                                <div><span class="text-slate-500">engine:</span> "Gemini / Argon"</div>
+                                <div><span class="text-slate-500">reasoning_effort:</span> "HIGH (Muy Exhaustivo)"</div>
+                                <div><span class="text-slate-500">stack:</span> "HTML5 + CSS3 Glass + Vanilla JS"</div>
+                                <div><span class="text-slate-500">local_assets:</span> ["Logo", "background", "paquete1..3"]</div>
+                                <div><span class="text-slate-500">deploy_target:</span> "GitHub Pages Ready"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. INFORMACIÓN DE CONTACTO FICTICIA & FUENTES CONSULTADAS (CUMPLIMIENTO ACA) -->
+        <section id="contacto" class="scroll-mt-24 grid lg:grid-cols-12 gap-8">
+            <!-- Fictional Contact Details -->
+            <div class="lg:col-span-6 glass-panel rounded-3xl p-6 sm:p-8 space-y-5">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-[#1D4ED8] font-bold">Canales de Atención (Ficticios - Proyecto Académico)</span>
+                    <h2 class="text-2xl font-extrabold mt-1">Contáctenos y recupere su tiempo</h2>
+                    <p class="text-xs text-[#64748B] dark:text-slate-400 mt-1">
+                        Todos los datos de contacto y redireccionamientos mostrados a continuación son simulados con fines demostrativos y académicos.
+                    </p>
+                </div>
+
+                <div class="space-y-3 text-xs sm:text-sm">
+                    <div class="p-3.5 rounded-2xl glass-panel flex items-center gap-3">
+                        <i data-lucide="phone-call" class="w-5 h-5 text-[#1D4ED8]"></i>
+                        <div>
+                            <span class="block text-[11px] text-[#64748B]">Línea WhatsApp Business (Simulada)</span>
+                            <strong class="font-mono">+57 (300) 000-0000 · @tec.sistem.oficial</strong>
+                        </div>
+                    </div>
+                    <div class="p-3.5 rounded-2xl glass-panel flex items-center gap-3">
+                        <i data-lucide="mail" class="w-5 h-5 text-[#1D4ED8]"></i>
+                        <div>
+                            <span class="block text-[11px] text-[#64748B]">Correo Corporativo</span>
+                            <strong class="font-mono">proyectos@tec-sistem-demo.co</strong>
+                        </div>
+                    </div>
+                    <div class="p-3.5 rounded-2xl glass-panel flex items-center gap-3">
+                        <i data-lucide="map-pin" class="w-5 h-5 text-[#1D4ED8]"></i>
+                        <div>
+                            <span class="block text-[11px] text-[#64748B]">Sede de Ingeniería (Ficticia)</span>
+                            <strong>Centro Empresarial Tech, Piso 8 · Bogotá D.C., Colombia</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="openWhatsAppChat('Hola tec.sistem, quiero agendar una reunión para automatizar mi negocio.')" class="w-full py-3.5 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <span>Abrir Simulador de Venta en WhatsApp</span>
+                </button>
+            </div>
+
+            <!-- Academic Sources, Tools & Copyright Attribution -->
+            <div class="lg:col-span-6 glass-panel rounded-3xl p-6 sm:p-8 space-y-5">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-[#1D4ED8] font-bold">Créditos, Herramientas y Derechos de Autor</span>
+                    <h2 class="text-2xl font-extrabold mt-1">Fuentes Consultadas y Recursos</h2>
+                    <p class="text-xs text-[#64748B] dark:text-slate-400 mt-1">
+                        Documentación técnica y atribución de recursos digitales conforme a los criterios de evaluación de la asignatura Informática y Convergencia.
+                    </p>
+                </div>
+
+                <ul class="space-y-2.5 text-xs text-[#64748B] dark:text-slate-300">
+                    <li class="p-3 rounded-xl glass-panel">
+                        <strong class="text-[#0F172A] dark:text-white block">1. Modelo de Inteligencia Artificial & Razonamiento:</strong>
+                        Google Gemini / Argon (Nivel de Razonamiento Alto — Muy Exhaustivo) para arquitectura de software, redacción corporativa (Misión, Visión, Eslogan) y lógica interactiva POS.
+                    </li>
+                    <li class="p-3 rounded-xl glass-panel">
+                        <strong class="text-[#0F172A] dark:text-white block">2. Creación de Imágenes y Derechos de Autor:</strong>
+                        Imágenes propias generadas mediante IA con Google Flow Nano Banana Pro y alojadas localmente en el repositorio: <code class="font-mono text-[#1D4ED8]">Logo.png/jpg/jpeg</code>, <code class="font-mono text-[#1D4ED8]">background.png/jpg/jpeg</code>, <code class="font-mono text-[#1D4ED8]">paquete1</code>, <code class="font-mono text-[#1D4ED8]">paquete2</code> y <code class="font-mono text-[#1D4ED8]">paquete3</code>. Libres de regalías y de autoría del proyecto.
+                    </li>
+                    <li class="p-3 rounded-xl glass-panel">
+                        <strong class="text-[#0F172A] dark:text-white block">3. Tecnologías y Documentación Web:</strong>
+                        MDN Web Docs (HTML5, CSS3 Backdrop-Filter Glassmorphism, ES6 JavaScript), Tailwind CSS Documentation, Lucide Icons (Licencia ISC) y GitHub Pages Docs.
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="relative z-10 border-t border-slate-200 dark:border-slate-800 glass-panel py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#64748B] dark:text-slate-400">
+            <div class="flex items-center gap-2">
+                <span class="font-mono font-bold text-[#0F172A] dark:text-white">tec<span class="text-[#1D4ED8]">.</span>sistem</span>
+                <span>· “Usted no se preocupe, nosotros nos encargamos.”</span>
+            </div>
+            <div class="text-center sm:text-right">
+                <span>Potenciado por <strong>IA Gemini / Argon (Razonamiento Alto Muy Exhaustivo)</strong> · Proyecto Académico Ficticio</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= FLOATING WHATSAPP SIMULATOR TRIGGER BUTTON ================= -->
+    <button onclick="openWhatsAppChat()" class="fixed bottom-5 right-5 z-40 bg-[#1D4ED8] hover:bg-[#1E40AF] text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 border-2 border-white dark:border-slate-800 transition-transform hover:scale-105">
+        <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-400"></span>
+        </span>
+        <i data-lucide="message-circle" class="w-5 h-5"></i>
+        <span class="text-xs font-bold pr-1">Chat de Ventas (Simulador WA)</span>
+    </button>
+
+    <!-- ================= WHATSAPP BUSINESS MESSAGING SIMULATOR MODAL ================= -->
+    <div id="waSimulatorModal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="w-full sm:max-w-md h-[88vh] sm:h-[620px] rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#111B21]">
+            <!-- WhatsApp Top Header -->
+            <div class="bg-[#075E54] dark:bg-[#202C33] text-white px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="relative w-10 h-10 rounded-full bg-white p-1 flex items-center justify-center overflow-hidden">
+                        <img id="waHeaderLogo" data-local-base="Logo" alt="tec.sistem WA" class="w-full h-full object-contain" />
+                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-white"></span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-bold text-sm">tec.sistem · Ventas & POS</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200 font-mono">BOT + ASESOR</span>
+                        </div>
+                        <span id="waTypingIndicator" class="block text-[11px] text-emerald-100">en línea · responde al instante</span>
+                    </div>
+                </div>
+                <button onclick="closeWhatsAppChat()" class="p-1.5 rounded-lg hover:bg-white/10 text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Messages Stream -->
+            <div id="waMessagesContainer" class="flex-1 overflow-y-auto p-4 space-y-3 wa-chat-bg text-xs">
+                <!-- Populated dynamically via JS -->
+            </div>
+
+            <!-- Quick Sales Prompts Bar -->
+            <div class="px-3 py-2 bg-slate-100 dark:bg-[#182229] border-t border-slate-200 dark:border-slate-800 flex items-center gap-1.5 overflow-x-auto text-[11px]">
+                <button onclick="sendQuickWaMessage('Quiero contratar el Paquete 1 ($500.000 COP único pago)')" class="shrink-0 px-2.5 py-1 rounded-full bg-white dark:bg-[#202C33] border border-slate-300 dark:border-slate-700 hover:border-[#1D4ED8]">
+                    📦 Paquete 1 ($500k)
+                </button>
+                <button onclick="sendQuickWaMessage('Me interesa el Paquete 2 con Stock + WhatsApp ($800k + $200k/mes)')" class="shrink-0 px-2.5 py-1 rounded-full bg-white dark:bg-[#202C33] border border-slate-300 dark:border-slate-700 hover:border-[#1D4ED8]">
+                    📲 Paquete 2 ($800k)
+                </button>
+                <button onclick="sendQuickWaMessage('Quiero el Paquete 3 POS Full Multiusuario ($3M + $500k/mes)')" class="shrink-0 px-2.5 py-1 rounded-full bg-white dark:bg-[#202C33] border border-slate-300 dark:border-slate-700 hover:border-[#1D4ED8]">
+                    🚀 Paquete 3 ($3M)
+                </button>
+                <button onclick="sendQuickWaMessage('Confirmar pedido y generar orden de servicio')" class="shrink-0 px-2.5 py-1 rounded-full bg-[#1D4ED8] text-white font-semibold">
+                    ✅ Cerrar Venta Ahora
+                </button>
+            </div>
+
+            <!-- Input Composer -->
+            <form onsubmit="handleWaFormSubmit(event)" class="p-3 bg-[#F0F2F5] dark:bg-[#202C33] flex items-center gap-2">
+                <input id="waMessageInput" type="text" placeholder="Escriba su mensaje para simular la venta..." class="flex-1 px-4 py-2.5 rounded-full text-xs bg-white dark:bg-[#2A3942] text-[#0F172A] dark:text-white focus:outline-none border border-slate-200 dark:border-slate-700" />
+                <button type="submit" class="w-10 h-10 rounded-full bg-[#075E54] hover:bg-[#128C7E] text-white flex items-center justify-center shrink-0 transition">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= LOCAL IMAGES LOADER / VERIFIER MODAL ================= -->
+    <div id="imageTesterModal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="w-full max-w-2xl glass-panel rounded-3xl p-6 space-y-5 border border-[#1D4ED8]/40 bg-white dark:bg-[#0F172A]">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                <div>
+                    <span class="text-xs font-mono uppercase text-[#1D4ED8] font-bold">Detector Automático PNG / JPG / JPEG</span>
+                    <h3 class="text-lg font-extrabold">Gestor de Imágenes Locales Generadas con Gemini</h3>
+                </div>
+                <button onclick="toggleImageTesterModal()" class="p-1.5 rounded-lg text-[#64748B] hover:text-[#0F172A] dark:hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-[#64748B] dark:text-slate-300 leading-relaxed">
+                Cuando suba este archivo <code class="font-mono text-[#1D4ED8]">index.html</code> a su repositorio de GitHub junto con sus imágenes en la misma carpeta, el código busca automáticamente cualquiera de las extensiones (<strong>.png, .jpg, .jpeg</strong>). Si desea previsualizar sus imágenes ahora mismo desde su computador sin subirlas aún, selecciónelas aquí:
+            </p>
+
+            <div class="grid sm:grid-cols-2 gap-3 text-xs">
+                <div class="p-3 rounded-xl glass-panel space-y-1.5">
+                    <div class="flex justify-between font-mono font-bold">
+                        <span>1. Logo.png/jpg/jpeg</span>
+                        <span id="status_Logo" class="text-[#1D4ED8]">Auto-Fallback</span>
+                    </div>
+                    <input type="file" accept="image/*" onchange="previewLocalFile(event, 'Logo')" class="w-full text-[11px]" />
+                </div>
+
+                <div class="p-3 rounded-xl glass-panel space-y-1.5">
+                    <div class="flex justify-between font-mono font-bold">
+                        <span>2. background.png/jpg/jpeg</span>
+                        <span id="status_background" class="text-[#1D4ED8]">Auto-Fallback</span>
+                    </div>
+                    <input type="file" accept="image/*" onchange="previewLocalFile(event, 'background')" class="w-full text-[11px]" />
+                </div>
+
+                <div class="p-3 rounded-xl glass-panel space-y-1.5">
+                    <div class="flex justify-between font-mono font-bold">
+                        <span>3. paquete1.png/jpg/jpeg</span>
+                        <span id="status_paquete1" class="text-[#1D4ED8]">Auto-Fallback</span>
+                    </div>
+                    <input type="file" accept="image/*" onchange="previewLocalFile(event, 'paquete1')" class="w-full text-[11px]" />
+                </div>
+
+                <div class="p-3 rounded-xl glass-panel space-y-1.5">
+                    <div class="flex justify-between font-mono font-bold">
+                        <span>4. paquete2.png/jpg/jpeg</span>
+                        <span id="status_paquete2" class="text-[#1D4ED8]">Auto-Fallback</span>
+                    </div>
+                    <input type="file" accept="image/*" onchange="previewLocalFile(event, 'paquete2')" class="w-full text-[11px]" />
+                </div>
+
+                <div class="p-3 rounded-xl glass-panel space-y-1.5 sm:col-span-2">
+                    <div class="flex justify-between font-mono font-bold">
+                        <span>5. paquete3.png/jpg/jpeg</span>
+                        <span id="status_paquete3" class="text-[#1D4ED8]">Auto-Fallback</span>
+                    </div>
+                    <input type="file" accept="image/*" onchange="previewLocalFile(event, 'paquete3')" class="w-full text-[11px]" />
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="toggleImageTesterModal()" class="px-5 py-2.5 rounded-xl bg-[#1D4ED8] text-white text-xs font-semibold">
+                    Listo, continuar navegando
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT APPLICATION ENGINE ================= -->
+    <script>
+        /* =========================================================================
+           1. SMART LOCAL IMAGE RESOLVER (Tries .png, .jpg, .jpeg + SVG Generator)
+           ========================================================================= */
+        const LOCAL_ASSETS_MAP = {
+            Logo: ['Logo.png', 'Logo.jpg', 'Logo.jpeg', 'logo.png', 'logo.jpg', 'logo.jpeg'],
+            background: ['background.png', 'background.jpg', 'background.jpeg', 'background.png', 'background.jpg', 'background.jpeg', 'background.png', 'background.jpg'],
+            paquete1: ['paquete1.png', 'paquete1.jpg', 'paquete1.jpeg', 'Paquete1.png', 'Paquete1.jpg', 'Paquete1.jpeg'],
+            paquete2: ['paquete2.png', 'paquete2.jpg', 'paquete2.jpeg', 'Paquete2.png', 'Paquete2.jpg', 'Paquete2.jpeg'],
+            paquete3: ['paquete3.png', 'paquete3.jpg', 'paquete3.jpeg', 'Paquete3.png', 'Paquete3.jpg', 'Paquete3.jpeg']
+        };
+
+        // Generates a clean SVG Data URI fallback if the local image is not yet placed in the folder
+        function createGeminiSvgPlaceholder(baseName) {
+            if (baseName === 'Logo') {
+                const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+                    <rect width="120" height="120" rx="28" fill="#0F172A"/>
+                    <ellipse cx="52" cy="36" rx="28" ry="11" fill="#1D4ED8"/>
+                    <path d="M24 36V60C24 66 36.5 71 52 71C67.5 71 80 66 80 60V36" stroke="#FFFFFF" stroke-width="5"/>
+                    <path d="M24 60V82C24 88 36.5 93 52 93" stroke="#64748B" stroke-width="5" stroke-linecap="round"/>
+                    <circle cx="82" cy="78" r="24" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="4"/>
+                    <path d="M82 66V78L90 83" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+                </svg>`;
+                return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+            }
+
+            const titles = {
+                background: 'PORTADA: background.png/jpg/jpeg',
+                paquete1: 'PAQUETE 1: Web Landing Page ($500.000 COP)',
+                paquete2: 'PAQUETE 2: Catálogo + Stock + WhatsApp ($800.000 COP)',
+                paquete3: 'PAQUETE 3: Ecosistema POS Multiusuario ($3.000.000 COP)'
+            };
+            const subtitles = {
+                background: 'Imagen de fondo generada con Gemini IA',
+                paquete1: 'Archivo local esperado: paquete1.png / .jpg / .jpeg',
+                paquete2: 'Archivo local esperado: paquete2.png / .jpg / .jpeg',
+                paquete3: 'Archivo local esperado: paquete3.png / .jpg / .jpeg'
+            };
+
+            const svgCard = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+                <defs>
+                    <linearGradient id="g" x1="0" y1="0" x2="800" y2="450" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#0F172A"/>
+                        <stop offset="55%" stop-color="#1E293B"/>
+                        <stop offset="100%" stop-color="#1D4ED8"/>
+                    </linearGradient>
+                </defs>
+                <rect width="800" height="450" fill="url(#g)"/>
+                <circle cx="680" cy="90" r="140" fill="#1D4ED8" fill-opacity="0.25"/>
+                <circle cx="120" cy="380" r="160" fill="#64748B" fill-opacity="0.2"/>
+                <rect x="50" y="55" width="700" height="340" rx="24" fill="#0F172A" fill-opacity="0.55" stroke="#FFFFFF" stroke-opacity="0.2" stroke-width="2"/>
+                <text x="90" y="140" fill="#60A5FA" font-family="monospace" font-size="20" font-weight="bold">tec.sistem · GEMINI AI ASSET</text>
+                <text x="90" y="210" fill="#FFFFFF" font-family="sans-serif" font-size="28" font-weight="bold">${titles[baseName] || baseName}</text>
+                <text x="90" y="260" fill="#94A3B8" font-family="monospace" font-size="19">${subtitles[baseName] || ''}</text>
+                <rect x="90" y="300" width="330" height="44" rx="10" fill="#1D4ED8"/>
+                <text x="112" y="328" fill="#FFFFFF" font-family="sans-serif" font-size="16" font-weight="bold">Detección automática PNG / JPG / JPEG</text>
+            </svg>`;
+            return 'data:image/svg+xml;utf8,' + encodeURIComponent(svgCard);
+        }
+
+        function tryCandidatePaths(candidates, index, onSuccess, onFail) {
+            if (index >= candidates.length) {
+                onFail();
+                return;
+            }
+            const probe = new Image();
+            const candidateUrl = candidates[index];
+            probe.onload = () => onSuccess(candidateUrl);
+            probe.onerror = () => tryCandidatePaths(candidates, index + 1, onSuccess, onFail);
+            probe.src = candidateUrl;
+        }
+
+        function initAllLocalImages() {
+            Object.keys(LOCAL_ASSETS_MAP).forEach(baseKey => {
+                const candidates = LOCAL_ASSETS_MAP[baseKey];
+                const elements = document.querySelectorAll(`[data-local-base="${baseKey}"]`);
+                const statusBadge = document.getElementById(`status_${baseKey}`);
+
+                tryCandidatePaths(
+                    candidates,
+                    0,
+                    (foundUrl) => {
+                        elements.forEach(img => { img.src = foundUrl; });
+                        if (baseKey === 'background') {
+                            const globalBg = document.getElementById('globalCoverLayer');
+                            globalBg.src = foundUrl;
+                            globalBg.classList.remove('hidden');
+                        }
+                        if (statusBadge) {
+                            statusBadge.textContent = `✓ Cargado (${foundUrl})`;
+                            statusBadge.className = 'text-emerald-600 font-bold';
+                        }
+                    },
+                    () => {
+                        const fallbackUri = createGeminiSvgPlaceholder(baseKey);
+                        elements.forEach(img => { img.src = fallbackUri; });
+                        if (statusBadge) {
+                            statusBadge.textContent = 'Respaldo SVG (Subir archivo a carpeta)';
+                        }
+                    }
+                );
+            });
+        }
+
+        function previewLocalFile(event, baseKey) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                document.querySelectorAll(`[data-local-base="${baseKey}"]`).forEach(img => {
+                    img.src = dataUrl;
+                });
+                if (baseKey === 'background') {
+                    const globalBg = document.getElementById('globalCoverLayer');
+                    globalBg.src = dataUrl;
+                    globalBg.classList.remove('hidden');
+                }
+                const statusBadge = document.getElementById(`status_${baseKey}`);
+                if (statusBadge) {
+                    statusBadge.textContent = `✓ Previsualizando (${file.name})`;
+                    statusBadge.className = 'text-emerald-600 font-bold';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function toggleImageTesterModal() {
+            document.getElementById('imageTesterModal').classList.toggle('hidden');
+        }
+
+        /* =========================================================================
+           2. LIGHT / DARK MODE & GLASS CUSTOMIZER
+           ========================================================================= */
+        function setThemeMode(mode) {
+            const html = document.documentElement;
+            const btnLight = document.getElementById('btnModeLight');
+            const btnDark = document.getElementById('btnModeDark');
+
+            if (mode === 'dark') {
+                html.classList.add('dark');
+                btnDark.className = 'py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 border border-[#1D4ED8] bg-[#1D4ED8] text-white';
+                btnLight.className = 'py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-700 text-[#0F172A] dark:text-slate-200';
+            } else {
+                html.classList.remove('dark');
+                btnLight.className = 'py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 border border-[#1D4ED8] bg-[#1D4ED8] text-white';
+                btnDark.className = 'py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-700 text-[#0F172A] dark:text-slate-200';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            setThemeMode(isDark ? 'light' : 'dark');
+        }
+
+        function toggleCustomizer() {
+            document.getElementById('customizerDropdown').classList.toggle('hidden');
+        }
+
+        function toggleMobileNav() {
+            document.getElementById('mobileNav').classList.toggle('hidden');
+        }
+
+        function updateBlur(px) {
+            document.documentElement.style.setProperty('--glass-blur', `${px}px`);
+            document.getElementById('blurVal').textContent = `${px}px`;
+        }
+
+        function updateCoverOpacity(val) {
+            const decimal = (val / 100).toFixed(2);
+            document.documentElement.style.setProperty('--bg-cover-opacity', decimal);
+            document.getElementById('bgOpacityVal').textContent = `${val}%`;
+        }
+
+        /* =========================================================================
+           3. LIFE TIME CALCULATOR (SELLING TIME TO THE CLIENT)
+           ========================================================================= */
+        let selectedGoal = 'familia';
+
+        function setGoalActivity(goal) {
+            selectedGoal = goal;
+            ['familia', 'deporte', 'descanso'].forEach(g => {
+                const btn = document.getElementById(`goalBtn_${g}`);
+                if (g === goal) {
+                    btn.className = 'py-2 px-2 rounded-xl border border-[#1D4ED8] bg-[#1D4ED8] text-white font-semibold text-center transition';
+                } else {
+                    btn.className = 'py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 text-[#0F172A] dark:text-slate-200 font-semibold text-center transition';
+                }
+            });
+            calculateLifeTime();
+        }
+
+        function calculateLifeTime() {
+            const weeklyHours = parseInt(document.getElementById('heroHoursRange').value, 10);
+            document.getElementById('heroHoursVal').textContent = `${weeklyHours} hrs/sem`;
+
+            const monthlySaved = Math.round(weeklyHours * 4.3 * 0.88);
+            const yearlyDaysSaved = Math.max(1, Math.round((monthlySaved * 12) / 24));
+
+            document.getElementById('calcMonthHours').textContent = `${monthlySaved} hrs / mes`;
+            document.getElementById('calcYearDays').textContent = `${yearlyDaysSaved} días / año`;
+
+            const messages = {
+                familia: `Equivale a recuperar <strong>${monthlySaved} horas cada mes</strong> para compartir en familia mientras nuestros scripts generan sus reportes y controlan el stock.`,
+                deporte: `Tendrá <strong>${monthlySaved} horas libres al mes</strong> para entrenar su deporte favorito sin interrupciones por cierres de caja o errores de Excel.`,
+                descanso: `Gana <strong>${yearlyDaysSaved} días completos al año</strong> de tranquilidad sabiendo que su inventario, vendedores y reportes funcionan en piloto automático.`
+            };
+            document.getElementById('calcActivityMessage').innerHTML = messages[selectedGoal];
+        }
+
+        function quoteFromTimeCalculator() {
+            const weeklyHours = document.getElementById('heroHoursRange').value;
+            openWhatsAppChat(`Hola tec.sistem, actualmente pierdo ${weeklyHours} horas por semana en tareas manuales y quiero automatizar mi empresa para tener más tiempo para mi ${selectedGoal}.`);
+        }
+
+        /* =========================================================================
+           4. POS SIMULATOR (3 INTERACTIVE LEVELS)
+           ========================================================================= */
+        let currentCatalogFilter = 'all';
+        const catalogProducts = [
+            { id: 101, name: 'Terminal Lector Código QR Pro', price: 240000, available: true, category: 'Hardware POS' },
+            { id: 102, name: 'Impresora Térmica Bluetooth 80mm', price: 310000, available: true, category: 'Facturación' },
+            { id: 103, name: 'Licencia Módulo Inventario Cloud', price: 180000, available: false, category: 'Software' },
+            { id: 104, name: 'Router Industrial Doble Banda POS', price: 295000, available: true, category: 'Conectividad' }
+        ];
+
+        const posInventory = [
+            { id: 201, name: 'Café Especial Origen 500g', price: 42000, stock: 14 },
+            { id: 202, name: 'Prensa Francesa Acero Inox', price: 85000, stock: 6 },
+            { id: 203, name: 'Molino Automático Barista', price: 210000, stock: 2 },
+            { id: 204, name: 'Kit Filtros V60 x100 uds', price: 32000, stock: 19 }
+        ];
+
+        let posCart = [
+            { id: 201, name: 'Café Especial Origen 500g', price: 42000, qty: 2 }
+        ];
+
+        let adminMetrics = {
+            totalSales: 5420000,
+            txCount: 14,
+            sellers: {
+                'Camila Restrepo': 2450000,
+                'Mateo Vargas': 1890000,
+                'Valentina Ortiz': 1080000
+            }
+        };
+
+        function formatCOP(val) {
+            return '$' + val.toLocaleString('es-CO') + ' COP';
+        }
+
+        function setSimulatorLevel(level) {
+            [1, 2, 3].forEach(lvl => {
+                const pane = document.getElementById(`simPane${lvl}`);
+                const tab = document.getElementById(`simTab${lvl}`);
+                if (lvl === level) {
+                    pane.classList.remove('hidden');
+                    tab.className = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-[#1D4ED8] text-white shadow';
+                } else {
+                    pane.classList.add('hidden');
+                    tab.className = 'px-4 py-2 rounded-xl text-xs font-bold transition text-[#64748B] dark:text-slate-300';
+                }
+            });
+
+            const urls = {
+                1: 'https://empresa-ejemplo.tec.sistem/landing-corporativa',
+                2: 'https://tienda-cliente.tec.sistem/catalogo-whatsapp',
+                3: 'https://cloud-pos.tec.sistem/terminal-multiusuario'
+            };
+            document.getElementById('simUrlBar').textContent = urls[level];
+            document.getElementById('simStatusLabel').textContent = `MODO DEMO: PAQUETE ${level} ACTIVO`;
+        }
+
+        function jumpToPosSimulator(level) {
+            setSimulatorLevel(level);
+            document.getElementById('simulador-pos').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function simulateLandingLead() {
+            const name = document.getElementById('simLandingName').value;
+            const need = document.getElementById('simLandingNeed').value;
+            openWhatsAppChat(`Hola tec.sistem, soy ${name}. ${need}`);
+        }
+
+        // Level 2 Catalog Render & Stock Toggle
+        function renderLevel2Catalog(filter = currentCatalogFilter) {
+            currentCatalogFilter = filter;
+            const container = document.getElementById('simLevel2Grid');
+            const filtered = catalogProducts.filter(item => {
+                if (filter === 'in') return item.available;
+                if (filter === 'out') return !item.available;
+                return true;
+            });
+
+            container.innerHTML = filtered.map(item => `
+                <div class="glass-panel rounded-2xl p-4 flex flex-col justify-between border ${item.available ? 'border-slate-200 dark:border-slate-800' : 'border-rose-300 dark:border-rose-900/50 opacity-85'}">
+                    <div class="space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-mono uppercase text-[#64748B]">${item.category}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${item.available ? 'bg-emerald-500/15 text-emerald-600' : 'bg-rose-500/15 text-rose-600'}">
+                                ${item.available ? '● HAY STOCK' : '✕ AGOTADO'}
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-sm text-[#0F172A] dark:text-white">${item.name}</h4>
+                        <div class="font-mono text-base font-extrabold text-[#1D4ED8]">${formatCOP(item.price)}</div>
+                    </div>
+
+                    <div class="pt-4 mt-3 border-t border-slate-200/70 dark:border-slate-800 space-y-2">
+                        <button onclick="buyCatalogItemViaWhatsApp(${item.id})" class="w-full py-2 px-3 rounded-xl ${item.available ? 'bg-[#1D4ED8] hover:bg-[#1E40AF] text-white' : 'bg-slate-200 dark:bg-slate-800 text-[#64748B]'} text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                            <span>${item.available ? 'Comprar por WhatsApp' : 'Notificar cuando llegue'}</span>
+                        </button>
+                        <button onclick="toggleCatalogItemStock(${item.id})" class="w-full py-1 text-[11px] font-mono text-[#64748B] hover:text-[#0F172A] dark:hover:text-white underline">
+                            Alternar Stock (Simular)
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCatalogItemStock(id) {
+            const prod = catalogProducts.find(p => p.id === id);
+            if (prod) {
+                prod.available = !prod.available;
+                renderLevel2Catalog();
+            }
+        }
+
+        function buyCatalogItemViaWhatsApp(id) {
+            const prod = catalogProducts.find(p => p.id === id);
+            if (!prod) return;
+            if (prod.available) {
+                openWhatsAppChat(`Hola, vi en su catálogo web que "${prod.name}" (${formatCOP(prod.price)}) figura CON STOCK DISPONIBLE. Quiero comprarlo ahora mismo.`);
+            } else {
+                openWhatsAppChat(`Hola, vi en su página web que "${prod.name}" está AGOTADO. ¿Me avisan apenas ingrese nuevo stock?`);
+            }
+        }
+
+        // Level 3 POS Multi-User Functions
+        function switchPosRole(role) {
+            const sellerView = document.getElementById('posSellerWorkspace');
+            const adminView = document.getElementById('posAdminWorkspace');
+            const btnSeller = document.getElementById('btnPosVendedor');
+            const btnAdmin = document.getElementById('btnPosAdmin');
+
+            if (role === 'vendedor') {
+                sellerView.classList.remove('hidden');
+                adminView.classList.add('hidden');
+                btnSeller.className = 'px-3.5 py-2 rounded-lg text-xs font-bold bg-[#1D4ED8] text-white transition flex items-center gap-1.5';
+                btnAdmin.className = 'px-3.5 py-2 rounded-lg text-xs font-bold text-[#64748B] dark:text-slate-300 transition flex items-center gap-1.5';
+            } else {
+                sellerView.classList.add('hidden');
+                adminView.classList.remove('hidden');
+                btnAdmin.className = 'px-3.5 py-2 rounded-lg text-xs font-bold bg-[#1D4ED8] text-white transition flex items-center gap-1.5';
+                btnSeller.className = 'px-3.5 py-2 rounded-lg text-xs font-bold text-[#64748B] dark:text-slate-300 transition flex items-center gap-1.5';
+                renderPosAdminView();
+            }
+        }
+
+        function renderPosSellerView() {
+            const grid = document.getElementById('posSellerProductsGrid');
+            grid.innerHTML = posInventory.map(item => `
+                <div class="p-3.5 rounded-2xl glass-panel flex flex-col justify-between border border-slate-200/80 dark:border-slate-800">
+                    <div>
+                        <div class="flex justify-between items-center text-[11px] font-mono">
+                            <span class="${item.stock > 3 ? 'text-emerald-600' : item.stock > 0 ? 'text-amber-600 font-bold' : 'text-rose-600 font-bold'}">
+                                Stock: ${item.stock} uds
+                            </span>
+                            <span class="text-[#64748B]">SKU-${item.id}</span>
+                        </div>
+                        <div class="font-bold text-xs sm:text-sm mt-1">${item.name}</div>
+                        <div class="font-mono text-xs font-bold text-[#1D4ED8] mt-0.5">${formatCOP(item.price)}</div>
+                    </div>
+                    <button onclick="addToPosCart(${item.id})" ${item.stock === 0 ? 'disabled' : ''} class="mt-3 w-full py-2 rounded-xl ${item.stock > 0 ? 'bg-[#0F172A] dark:bg-white text-white dark:text-[#0F172A] hover:bg-[#1D4ED8] dark:hover:bg-[#1D4ED8] dark:hover:text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'} text-xs font-semibold transition">
+                        ${item.stock > 0 ? '+ Agregar al Ticket' : 'Sin Stock'}
+                    </button>
+                </div>
+            `).join('');
+
+            const ticketList = document.getElementById('posTicketList');
+            if (posCart.length === 0) {
+                ticketList.innerHTML = `<p class="text-center text-[#64748B] py-6">Seleccione productos para facturar.</p>`;
+                document.getElementById('posTicketTotal').textContent = '$0 COP';
+                return;
+            }
+
+            let total = 0;
+            ticketList.innerHTML = posCart.map(c => {
+                const sub = c.price * c.qty;
+                total += sub;
+                return `
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-100/80 dark:bg-slate-900">
+                        <div>
+                            <div class="font-semibold">${c.name}</div>
+                            <div class="text-[11px] text-[#64748B] font-mono">${c.qty} x ${formatCOP(c.price)}</div>
+                        </div>
+                        <span class="font-mono font-bold">${formatCOP(sub)}</span>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('posTicketTotal').textContent = formatCOP(total);
+        }
+
+        function addToPosCart(id) {
+            const product = posInventory.find(p => p.id === id);
+            if (!product || product.stock <= 0) return;
+
+            const existing = posCart.find(c => c.id === id);
+            if (existing) {
+                if (existing.qty < product.stock) existing.qty++;
+            } else {
+                posCart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+            }
+            renderPosSellerView();
+        }
+
+        function clearCart() {
+            posCart = [];
+            renderPosSellerView();
+        }
+
+        function completePosCheckout(sendToWa) {
+            if (posCart.length === 0) return;
+            const seller = document.getElementById('activeSellerSelect').value;
+            let saleSum = 0;
+            const summaryItems = [];
+
+            posCart.forEach(cartItem => {
+                const inv = posInventory.find(p => p.id === cartItem.id);
+                if (inv) {
+                    inv.stock = Math.max(0, inv.stock - cartItem.qty);
+                }
+                saleSum += cartItem.price * cartItem.qty;
+                summaryItems.push(`${cartItem.qty}x ${cartItem.name}`);
+            });
+
+            adminMetrics.totalSales += saleSum;
+            adminMetrics.txCount += 1;
+            adminMetrics.sellers[seller] = (adminMetrics.sellers[seller] || 0) + saleSum;
+
+            posCart = [];
+            renderPosSellerView();
+            renderPosAdminView();
+
+            if (sendToWa) {
+                openWhatsAppChat(`Comprobante POS Nivel 3 — Vendedor: ${seller}. Productos: ${summaryItems.join(', ')}. Total pagado: ${formatCOP(saleSum)}. El stock ya fue descontado automáticamente de la base de datos.`);
+            }
+        }
+
+        function renderPosAdminView() {
+            document.getElementById('admTotalSales').textContent = formatCOP(adminMetrics.totalSales);
+            document.getElementById('admTxCount').textContent = `${adminMetrics.txCount} órdenes procesadas`;
+
+            const lowStockItems = posInventory.filter(i => i.stock <= 3).length;
+            document.getElementById('admLowStockCount').textContent = `${lowStockItems} SKU`;
+
+            const tbody = document.getElementById('admInventoryRows');
+            tbody.innerHTML = posInventory.map(item => `
+                <tr>
+                    <td class="py-2.5 font-sans font-semibold">${item.name}</td>
+                    <td class="py-2.5 font-bold">${item.stock} uds</td>
+                    <td class="py-2.5">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.stock > 3 ? 'bg-emerald-500/15 text-emerald-600' : 'bg-amber-500/20 text-amber-600'}">
+                            ${item.stock > 3 ? 'ÓPTIMO' : 'STOCK BAJO'}
+                        </span>
+                    </td>
+                    <td class="py-2.5 text-right">
+                        <button onclick="restockPosItem(${item.id})" class="px-2.5 py-1 rounded-lg bg-[#1D4ED8] text-white text-[11px] font-sans font-semibold">
+                            +10 uds
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            const sellersBox = document.getElementById('admSellerStats');
+            sellersBox.innerHTML = Object.entries(adminMetrics.sellers).map(([name, amount]) => `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-900">
+                    <span class="font-semibold">${name}</span>
+                    <span class="font-mono font-bold text-[#1D4ED8]">${formatCOP(amount)}</span>
+                </div>
+            `).join('');
+        }
+
+        function restockPosItem(id) {
+            const item = posInventory.find(p => p.id === id);
+            if (item) {
+                item.stock += 10;
+                renderPosAdminView();
+                renderPosSellerView();
+            }
+        }
+
+        function sendAdminReportToWhatsApp() {
+            openWhatsAppChat(`📊 REPORTE AUTOMÁTICO TEC.SISTEM: Ventas acumuladas hoy: ${formatCOP(adminMetrics.totalSales)} en ${adminMetrics.txCount} transacciones. Base de datos sincronizada al 100%. Usted puede seguir disfrutando su tiempo en familia.`);
+        }
+
+        /* =========================================================================
+           5. DATABASE NORMALIZATION MINI-LAB
+           ========================================================================= */
+        const dirtyDbRows = [
+            { id: 'raw_01', name: 'ferreteria el sol s.a.s', phone: '310 555-0192', balance: '1.200.000$', status: 'Formato inválido' },
+            { id: 'raw_01_dup', name: 'FERRETERIA EL SOL SAS', phone: '+573105550192', balance: '1200000', status: 'Registro Duplicado' },
+            { id: 'raw_02', name: 'Distri Norte Ltda.', phone: '(315) 888 9900', balance: '850.000 cop', status: 'Tel sin código país' },
+            { id: 'raw_03', name: 'Comercializadora Andina', phone: '300-444-1122', balance: '2450000', status: 'OK / Sin normalizar' }
+        ];
+
+        const cleanDbRows = [
+            { id: 'CLI-001', name: 'Ferretería El Sol S.A.S.', phone: '+57 310 555 0192', balance: '$1.200.000 COP', status: '✓ Normalizado (Sin Duplicado)' },
+            { id: 'CLI-002', name: 'Distri Norte Ltda.', phone: '+57 315 888 9900', balance: '$850.000 COP', status: '✓ Estandarizado SQL' },
+            { id: 'CLI-003', name: 'Comercializadora Andina', phone: '+57 300 444 1122', balance: '$2.450.000 COP', status: '✓ Estandarizado SQL' }
+        ];
+
+        function resetDatabaseDemo() {
+            const tbody = document.getElementById('dbTableBody');
+            tbody.innerHTML = dirtyDbRows.map(r => `
+                <tr>
+                    <td class="py-2 px-2 text-rose-500">${r.id}</td>
+                    <td class="py-2 px-2">${r.name}</td>
+                    <td class="py-2 px-2">${r.phone}</td>
+                    <td class="py-2 px-2">${r.balance}</td>
+                    <td class="py-2 px-2"><span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-600 text-[10px] font-bold">${r.status}</span></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('dbTerminalBox').innerHTML = `
+                <div class="text-amber-400 font-bold">⚠ ESTADO: BASE DE DATOS SIN DEPURAR</div>
+                <p class="text-slate-300 text-[11px]">Se detectaron clientes duplicados y teléfonos mal escritos que impiden enviar reportes automáticos.</p>
+            `;
+        }
+
+        function normalizeDatabaseDemo() {
+            const tbody = document.getElementById('dbTableBody');
+            tbody.innerHTML = cleanDbRows.map(r => `
+                <tr>
+                    <td class="py-2 px-2 text-[#1D4ED8] font-bold">${r.id}</td>
+                    <td class="py-2 px-2 font-semibold">${r.name}</td>
+                    <td class="py-2 px-2">${r.phone}</td>
+                    <td class="py-2 px-2 font-bold">${r.balance}</td>
+                    <td class="py-2 px-2"><span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 text-[10px] font-bold">${r.status}</span></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('dbTerminalBox').innerHTML = `
+                <div class="text-emerald-400 font-bold">✓ DEPURACIÓN & SCRIPT COMPLETADO (0.2s)</div>
+                <div class="text-slate-300 text-[11px] space-y-1">
+                    <div>• 1 registro duplicado fusionado</div>
+                    <div>• Cartera Total Consolidada: <strong>$4.500.000 COP</strong></div>
+                    <div>• Informe PDF enviado automáticamente al WhatsApp del propietario.</div>
+                </div>
+            `;
+        }
+
+        /* =========================================================================
+           6. REALISTIC WHATSAPP BUSINESS WEB SALES SIMULATOR
+           ========================================================================= */
+        const waMessages = [
+            {
+                sender: 'bot',
+                text: '👋 ¡Bienvenido a *tec.sistem*! *"Usted no se preocupe, nosotros nos encargamos."* \n\nSoy su asistente comercial. Cuénteme qué paquete POS o qué proceso de su empresa desea automatizar hoy para devolverle su tiempo libre.',
+                time: '10:00 AM'
+            }
+        ];
+
+        function getFormattedTime() {
+            const now = new Date();
+            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function renderWaMessages() {
+            const container = document.getElementById('waMessagesContainer');
+            container.innerHTML = waMessages.map(m => {
+                const isUser = m.sender === 'user';
+                const formattedText = m.text.replace(/\*(.*?)\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                return `
+                    <div class="flex ${isUser ? 'justify-end' : 'justify-start'}">
+                        <div class="max-w-[82%] rounded-2xl px-3.5 py-2.5 shadow-sm ${isUser ? 'bg-[#D9FDD3] dark:bg-[#005C4B] text-[#0F172A] dark:text-white rounded-tr-none' : 'bg-white dark:bg-[#202C33] text-[#0F172A] dark:text-white rounded-tl-none'}">
+                            <div class="leading-relaxed">${formattedText}</div>
+                            <div class="flex items-center justify-end gap-1 mt-1 text-[10px] text-[#64748B] dark:text-slate-300">
+                                <span>${m.time}</span>
+                                ${isUser ? '<span class="text-[#1D4ED8] dark:text-sky-400 font-bold">✓✓</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function openWhatsAppChat(prefilledText = '') {
+            document.getElementById('waSimulatorModal').classList.remove('hidden');
+            renderWaMessages();
+            if (prefilledText) {
+                sendQuickWaMessage(prefilledText);
+            }
+        }
+
+        function closeWhatsAppChat() {
+            document.getElementById('waSimulatorModal').classList.add('hidden');
+        }
+
+        function openWhatsAppPackageQuote(pkgNum) {
+            const messagesByPkg = {
+                1: 'Hola tec.sistem, quiero contratar el *Paquete 1: Web Landing Page* de *$500.000 COP (Único pago)*.',
+                2: 'Hola tec.sistem, quiero contratar el *Paquete 2: Página con Productos + Estado de Stock + WhatsApp* por *$800.000 COP + suscripción mensual de $200.000 COP*.',
+                3: 'Hola tec.sistem, quiero contratar el *Paquete 3: Ecosistema Web POS Full (Stock en vivo, Vendedores, Admin, Redes y Automatización DB)* por *$3.000.000 COP + suscripción de $500.000 COP/mes*.'
+            };
+            openWhatsAppChat(messagesByPkg[pkgNum]);
+        }
+
+        function sendQuickWaMessage(text) {
+            waMessages.push({
+                sender: 'user',
+                text: text,
+                time: getFormattedTime()
+            });
+            renderWaMessages();
+
+            const indicator = document.getElementById('waTypingIndicator');
+            indicator.textContent = 'escribiendo propuesta comercial...';
+
+            setTimeout(() => {
+                const reply = generateSmartSalesReply(text);
+                waMessages.push({
+                    sender: 'bot',
+                    text: reply,
+                    time: getFormattedTime()
+                });
+                indicator.textContent = 'en línea · responde al instante';
+                renderWaMessages();
+            }, 650);
+        }
+
+        function handleWaFormSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('waMessageInput');
+            const val = input.value.trim();
+            if (!val) return;
+            input.value = '';
+            sendQuickWaMessage(val);
+        }
+
+        function generateSmartSalesReply(userText) {
+            const lower = userText.toLowerCase();
+            if (lower.includes('paquete 1') || lower.includes('500.000') || lower.includes('500k')) {
+                return '✅ *¡Excelente elección!* El *Paquete 1 (Landing Page Corporativa)* tiene un valor único de *$500.000 COP* sin mensualidades.\n\nIncluye diseño Glassy personalizado, botones a sus redes y entrega en 5 días hábiles. ¿Desea que generemos la orden de inicio hoy mismo?';
+            }
+            if (lower.includes('paquete 2') || lower.includes('800.000') || lower.includes('800k')) {
+                return '📲 *¡El favorito de los comercios!* El *Paquete 2 ($800.000 COP + $200.000/mes)* muestra sus productos indicando si hay stock o están agotados y envía el pedido directo a su WhatsApp.\n\nAdemás, la mensualidad incluye la depuración de su base de datos de precios y un reporte automático mensual. ¿Agendamos el despliegue de su catálogo?';
+            }
+            if (lower.includes('paquete 3') || lower.includes('3.000.000') || lower.includes('3m')) {
+                return '🚀 *¡Automatización Total Nivel 3!* Con el *Ecosistema POS Full ($3.000.000 COP + $500.000/mes)* usted recibe:\n• Web conectada con Stock en tiempo real\n• Sesiones para Usuarios Vendedores y Panel Admin\n• Depuración de Base de Datos, Scripts y Reportes Automáticos FULL.\n\nAsí usted podrá disfrutar su tiempo en familia mientras el sistema controla todo.';
+            }
+            if (lower.includes('comprar') || lower.includes('stock disponible')) {
+                return '🛒 *¡Pedido recibido en el POS!* Hemos reservado su unidad en tiempo real.\n\n• *Estado:* En Stock Verificado\n• *Pago simulado:* Nequi / PSE / Transferencia\n• *Orden #:* POS-9482\n\n¡Gracias por probar la experiencia de venta conversacional de *tec.sistem*!';
+            }
+            if (lower.includes('confirmar') || lower.includes('cerrar venta') || lower.includes('orden')) {
+                return '🎉 *¡VENTA SIMULADA EXITOSAMENTE!*\n\n• *Orden de Servicio:* #TS-2025-884\n• *Promesa de Marca:* "Usted no se preocupe, nosotros nos encargamos."\n\nNuestro equipo de ingeniería ya inició la configuración de su plataforma y sus scripts automáticos.';
+            }
+            return '🤝 Recibido. En *tec.sistem* nos encargamos de automatizar ese proceso, estructurar su base de datos y generar sus informes automáticamente para devolverle su tiempo libre.\n\nPuede tocar el botón *"✅ Cerrar Venta Ahora"* aquí abajo para simular la contratación inmediata.';
+        }
+
+        /* =========================================================================
+           INITIALIZATION ON LOAD
+           ========================================================================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initAllLocalImages();
+            calculateLifeTime();
+            renderLevel2Catalog('all');
+            renderPosSellerView();
+            renderPosAdminView();
+            resetDatabaseDemo();
+        });
+    </script>
+</body>
+</html>
